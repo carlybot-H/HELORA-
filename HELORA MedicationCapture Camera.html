@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HELORA · Medication Capture</title>
+<style>
+  /* ---- HELORA locked tokens ---- */
+  :root{
+    --canvas:#000;
+    --card:#0A0D12;
+    --card-raise:#11151C;
+    --line:#1E242E;
+    --blue:#4E82C9;     /* action */
+    --amber:#D39D35;    /* information / attention — never alarm */
+    --green:#5B9A78;    /* readiness / prep / calm confirm */
+    --ink:#F2F4F7;
+    --ink-soft:#AEB6C2;
+    --ink-faint:#6C7480;
+    --radius:16px;
+    --tap:52px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--canvas);}
+  body{
+    font-family:'Lato',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    display:flex;justify-content:center;
+  }
+  .app{
+    width:100%;max-width:430px;min-height:100dvh;
+    background:var(--canvas);position:relative;overflow:hidden;
+    padding:max(env(safe-area-inset-top),14px) 20px calc(env(safe-area-inset-bottom) + 20px);
+    display:flex;flex-direction:column;
+  }
+
+  /* ---- shared chrome ---- */
+  .lockup{display:flex;align-items:center;gap:9px;padding:6px 0 20px;}
+  .mark{width:22px;height:22px;flex:none;}
+  .lockup .name{font-weight:800;letter-spacing:.14em;font-size:13px;color:var(--ink-soft);}
+  .progress{display:flex;gap:6px;margin:0 0 22px;}
+  .pip{height:3px;flex:1;border-radius:2px;background:var(--line);transition:background .3s;}
+  .pip.on{background:var(--green);}
+
+  h1{font-size:25px;line-height:1.22;font-weight:800;margin:0 0 10px;letter-spacing:-.01em;}
+  .sub{font-size:15px;line-height:1.5;color:var(--ink-soft);margin:0 0 26px;font-weight:400;}
+  .whisper{font-size:12.5px;color:var(--ink-faint);line-height:1.5;font-weight:400;}
+
+  .screen{display:none;flex-direction:column;flex:1;animation:rise .32s ease both;}
+  .screen.active{display:flex;}
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .spacer{flex:1;}
+
+  /* ---- buttons ---- */
+  .btn{
+    width:100%;min-height:var(--tap);border:none;border-radius:14px;
+    font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:transform .12s,filter .12s;letter-spacing:.005em;
+  }
+  .btn:active{transform:scale(.985);filter:brightness(1.08);}
+  .btn-blue{background:var(--blue);color:#061018;}
+  .btn-green{background:var(--green);color:#04120B;}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);font-weight:600;}
+  .btn-text{background:none;color:var(--ink-soft);min-height:44px;font-weight:600;font-size:14.5px;border:none;cursor:pointer;}
+  .btn + .btn{margin-top:12px;}
+  .btnrow{display:flex;flex-direction:column;margin-top:auto;}
+
+  /* ---- intro entry options ---- */
+  .opt{
+    display:flex;align-items:center;gap:14px;width:100%;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:12px;cursor:pointer;text-align:left;
+    transition:border-color .15s,background .15s;
+  }
+  .opt:active{background:var(--card-raise);}
+  .opt .oi{width:40px;height:40px;border-radius:11px;background:var(--card-raise);display:flex;align-items:center;justify-content:center;flex:none;}
+  .opt .ol{font-size:16px;font-weight:700;color:var(--ink);}
+  .opt .od{font-size:13px;color:var(--ink-soft);margin-top:2px;font-weight:400;}
+  .opt.primary{border-color:rgba(78,130,201,.55);}
+  .opt.primary .oi{background:rgba(78,130,201,.16);}
+
+  /* ---- camera ---- */
+  .viewfinder{
+    position:relative;flex:1;border-radius:22px;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 50% 30%, #171B22 0%, #0B0E13 70%, #05070A 100%);
+    border:1px solid var(--line);margin-bottom:20px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .bottle{width:104px;height:170px;position:relative;opacity:.9;}
+  .bottle .cap{position:absolute;top:0;left:26px;width:52px;height:20px;border-radius:5px 5px 0 0;background:#2A313C;}
+  .bottle .body{position:absolute;top:18px;left:14px;width:76px;height:152px;border-radius:9px;background:linear-gradient(180deg,#E7A23A,#C98420);}
+  .bottle .lbl{position:absolute;top:52px;left:14px;width:76px;height:78px;background:#F4EFE6;display:flex;flex-direction:column;gap:5px;padding:9px 8px;}
+  .bottle .lbl i{display:block;height:5px;border-radius:2px;background:#C7BEB0;}
+  .bottle .lbl i:first-child{width:80%;height:7px;background:#8A8073;}
+  .bottle .lbl i:nth-child(2){width:55%;}
+  .bottle .lbl i:nth-child(3){width:70%;}
+  .frame-guide{position:absolute;inset:34px;border:2px dashed rgba(255,255,255,.18);border-radius:16px;pointer-events:none;}
+  .frame-guide::before,.frame-guide::after,
+  .corner{position:absolute;width:22px;height:22px;border:3px solid var(--blue);}
+  .fg-hint{position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:var(--ink-soft);}
+  .shutter{display:block;width:66px;height:66px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.28);margin:0 auto;cursor:pointer;transition:transform .1s;}
+  .shutter:active{transform:scale(.92);}
+  .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
+  .shot.on{display:block;}
+  .cam-foot{display:flex;flex-direction:column;align-items:center;gap:14px;}
+
+  /* ---- review card (the signature screen) ---- */
+  .readout{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px 6px 14px;margin-bottom:16px;}
+  .field{padding:14px 14px 12px;border-bottom:1px solid var(--line);}
+  .field:last-child{border-bottom:none;}
+  .field .flabel{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+  .field .fval{font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+  .field .finput{width:100%;background:var(--card-raise);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-family:inherit;font-size:18px;font-weight:700;padding:11px 12px;display:none;}
+  .field.editing .fval{display:none;}
+  .field.editing .finput{display:block;}
+  .field.uncertain{background:rgba(211,157,53,.06);border-radius:12px;}
+  .flag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--amber);background:rgba(211,157,53,.14);padding:3px 8px;border-radius:20px;letter-spacing:.02em;text-transform:none;}
+  .uncertain-note{font-size:12.5px;color:var(--amber);margin-top:9px;line-height:1.45;font-weight:400;}
+  .freq-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  .chip{font-size:13.5px;font-weight:600;color:var(--ink-soft);background:var(--card-raise);border:1px solid var(--line);border-radius:20px;padding:8px 13px;cursor:pointer;}
+  .chip.sel{background:rgba(78,130,201,.16);border-color:rgba(78,130,201,.5);color:#CFE0F5;}
+  .field.editing .fval-chips{display:block;}
+  .fval-chips{display:none;margin-top:8px;}
+
+  .verify-line{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 2px 18px;font-weight:400;}
+  .verify-line svg{flex:none;margin-top:1px;}
+
+  /* ---- saved list ---- */
+  .med{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:11px;}
+  .med .tick{width:26px;height:26px;border-radius:50%;background:rgba(91,154,120,.16);display:flex;align-items:center;justify-content:center;flex:none;}
+  .med .mtext .mn{font-size:16px;font-weight:700;color:var(--ink);}
+  .med .mtext .md{font-size:13px;color:var(--ink-soft);margin-top:2px;font-weight:400;}
+  .count{font-size:13px;color:var(--ink-faint);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin:0 2px 14px;}
+
+  /* ---- finish / honest hand-off ---- */
+  .done-emblem{width:64px;height:64px;border-radius:50%;background:rgba(91,154,120,.14);display:flex;align-items:center;justify-content:center;margin:8px 0 20px;}
+  .handoff{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+  .handoff .ht{font-size:16px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:9px;}
+  .handoff .hd{font-size:13.5px;color:var(--ink-soft);line-height:1.55;font-weight:400;}
+  .handoff.saved{border-color:rgba(91,154,120,.4);}
+  .handoff.saved .ht{color:#CDE7DA;}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="lockup">
+    <svg class="mark" viewBox="0 0 24 24" fill="none"><path d="M12 2.5c3.9 1.4 6.8 1.6 6.8 1.6v7.1c0 5-3.4 8-6.8 9.3-3.4-1.3-6.8-4.3-6.8-9.3V4.1s2.9-.2 6.8-1.6Z" stroke="#4E82C9" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 8.4v7.2M8.4 12h7.2" stroke="#4E82C9" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="name">HELORA</span>
+  </div>
+
+  <div class="progress">
+    <div class="pip on" id="p1"></div>
+    <div class="pip" id="p2"></div>
+    <div class="pip" id="p3"></div>
+    <div class="pip" id="p4"></div>
+  </div>
+
+  <!-- 1 · INTRO / ON-RAMP -->
+  <section class="screen active" id="s-intro">
+    <h1>Let's build your<br>medication list.</h1>
+    <p class="sub">One bottle at a time. Ready and waiting, so you never have to remember it under pressure — and so anyone helping you can see it.</p>
+
+    <button class="opt primary" onclick="go('capture')">
+      <span class="oi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6.5" width="18" height="13" rx="2.5" stroke="#4E82C9" stroke-width="1.6"/><circle cx="12" cy="13" r="3.4" stroke="#4E82C9" stroke-width="1.6"/><path d="M8.5 6.5 9.7 4.5h4.6l1.2 2" stroke="#4E82C9" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+      <span><span class="ol">Photograph a bottle</span><span class="od">I'll read the label and you check it</span></span>
+    </button>
+    <button class="opt" onclick="go('review')">
+      <span class="oi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3.5a2.4 2.4 0 0 1 2.4 2.4v5.6a2.4 2.4 0 1 1-4.8 0V5.9A2.4 2.4 0 0 1 12 3.5Z" stroke="#AEB6C2" stroke-width="1.6"/><path d="M6 11.2a6 6 0 0 0 12 0M12 17.2v3" stroke="#AEB6C2" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+      <span><span class="ol">Say them out loud</span><span class="od">Speak each one — no typing</span></span>
+    </button>
+    <button class="opt" onclick="go('review')">
+      <span class="oi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M5 12h14M5 17h9" stroke="#AEB6C2" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+      <span><span class="ol">Type them in</span><span class="od">The old way, if you prefer</span></span>
+    </button>
+
+    <div class="spacer"></div>
+    <p class="whisper">Nothing leaves your phone unless you send it. You can stop and come back anytime.</p>
+  </section>
+
+  <!-- 2 · CAPTURE -->
+  <section class="screen" id="s-capture">
+    <h1 style="font-size:22px;margin-bottom:16px;">Point at the label</h1>
+    <div class="viewfinder">
+      <div class="frame-guide"></div>
+      <div class="bottle" id="bottleMock">
+        <div class="cap"></div><div class="body"></div>
+        <div class="lbl"><i></i><i></i><i></i><i></i></div>
+      </div>
+      <img id="shot" class="shot" alt="Your captured photo">
+      <div class="fg-hint" id="vfHint">Fit the label inside the frame</div>
+    </div>
+
+    <div class="cam-foot" id="camControls">
+      <button type="button" class="shutter" id="shutterBtn" aria-label="Take photo"></button>
+      <input id="camInput" type="file" accept="image/*" capture="environment"
+             style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;">
+      <button class="btn-text" onclick="go('review')">Can't use the camera? Enter by hand</button>
+    </div>
+
+    <div class="cam-foot" id="previewControls" style="display:none;">
+      <button class="btn btn-green" onclick="go('review')">Looks clear — use this photo</button>
+      <button class="btn-text" onclick="retake()">Retake</button>
+    </div>
+  </section>
+
+  <!-- 3 · REVIEW  (signature screen: propose, don't assert) -->
+  <section class="screen" id="s-review">
+    <h1 style="font-size:22px;">Check this before I save it</h1>
+    <p class="sub" style="margin-bottom:18px;">I've read the label as best I can. You confirm it's right — I won't add anything you haven't checked.</p>
+
+    <div class="readout">
+      <div class="field" id="f-name">
+        <div class="flabel">Medication</div>
+        <div class="fval">Lisinopril</div>
+        <input class="finput" value="Lisinopril">
+      </div>
+
+      <div class="field uncertain" id="f-dose">
+        <div class="flabel">Dose <span class="flag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16.5v.5" stroke="#D39D35" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#D39D35" stroke-width="1.6"/></svg>Double-check</span></div>
+        <div class="fval">10 mg</div>
+        <input class="finput" value="10 mg">
+        <div class="uncertain-note">The label was a little blurry here — worth a second look before you save.</div>
+      </div>
+
+      <div class="field" id="f-freq">
+        <div class="flabel">How often</div>
+        <div class="fval">Once a day</div>
+        <div class="fval-chips">
+          <div class="freq-chips">
+            <div class="chip sel">Once a day</div>
+            <div class="chip">Twice a day</div>
+            <div class="chip">At night</div>
+            <div class="chip">As needed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verify-line">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3 5 6v5c0 4 3 6.5 7 8 4-1.5 7-4 7-8V6l-7-3Z" stroke="#5B9A78" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.2 12l2 2 3.6-4" stroke="#5B9A78" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Only medications you confirm go on your list. That's how HELORA can promise it's accurate.</span>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn btn-green" onclick="go('list')">Looks right — save it</button>
+      <button class="btn btn-ghost" onclick="toggleEdit()">Something's off — let me fix it</button>
+    </div>
+  </section>
+
+  <!-- 4 · SAVED LIST -->
+  <section class="screen" id="s-list">
+    <h1 style="font-size:22px;">Your medications</h1>
+    <p class="sub" style="margin-bottom:20px;">Three saved, all checked by you. Add more, or finish whenever you're ready.</p>
+
+    <div class="count">Confirmed · 3</div>
+
+    <div class="med">
+      <div class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="#5B9A78" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mtext"><div class="mn">Lisinopril</div><div class="md">10 mg · once a day</div></div>
+    </div>
+    <div class="med">
+      <div class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="#5B9A78" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mtext"><div class="mn">Metformin</div><div class="md">500 mg · twice a day</div></div>
+    </div>
+    <div class="med">
+      <div class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="#5B9A78" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mtext"><div class="mn">Atorvastatin</div><div class="md">20 mg · at night</div></div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn btn-blue" onclick="go('capture')">Add another</button>
+      <button class="btn btn-green" onclick="go('finish')">I'm done for now</button>
+    </div>
+  </section>
+
+  <!-- 5 · FINISH · honest hand-off -->
+  <section class="screen" id="s-finish">
+    <div class="done-emblem">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 3 5 6v5c0 4 3 6.5 7 8 4-1.5 7-4 7-8V6l-7-3Z" stroke="#5B9A78" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4.5" stroke="#5B9A78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h1 style="font-size:22px;">3 medications saved in HELORA</h1>
+    <p class="sub">They're on your responder card now, and they'll travel with you — even to a new phone.</p>
+
+    <div class="handoff saved">
+      <div class="ht"><span class="dot" style="background:#5B9A78"></span>Saved here in HELORA</div>
+      <div class="hd">Ready for your responder card and document wallet. This part is done.</div>
+    </div>
+
+    <div class="handoff">
+      <div class="ht"><span class="dot" style="background:#4E82C9"></span>Add to your phone's emergency card</div>
+      <div class="hd">Your phone keeps its lock-screen medical card as a manual list — HELORA can't fill it in for you. But your list is ready to copy in. Tap below and I'll open it beside your Health settings so it's a few taps, not a fresh start.</div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn btn-blue" onclick="alert('Prototype: opens your list + the phone\u2019s Health / Emergency Info settings side by side.')">Copy my list over</button>
+      <button class="btn btn-text" onclick="reset()">Back to start</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  var order=['intro','capture','review','list','finish'];
+  var pipMap={intro:1,capture:1,review:2,list:3,finish:4};
+  function go(id){
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+    var el=document.getElementById('s-'+id);
+    el.classList.add('active');
+    var n=pipMap[id];
+    for(var i=1;i<=4;i++){document.getElementById('p'+i).classList.toggle('on', i<=n);}
+    var app=document.querySelector('.app'); app.scrollTop=0; window.scrollTo(0,0);
+  }
+  function toggleEdit(){
+    ['f-name','f-dose','f-freq'].forEach(function(id){document.getElementById(id).classList.add('editing');});
+  }
+  // frequency chips (edit mode)
+  document.querySelectorAll('.freq-chips .chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      document.querySelectorAll('.freq-chips .chip').forEach(function(x){x.classList.remove('sel');});
+      c.classList.add('sel');
+      document.querySelector('#f-freq .fval').textContent=c.textContent;
+    });
+  });
+  function reset(){
+    ['f-name','f-dose','f-freq'].forEach(function(id){document.getElementById(id).classList.remove('editing');});
+    retake();
+    go('intro');
+  }
+
+  // ---- real camera capture (native hand-off) ----
+  var camInput=document.getElementById('camInput');
+  var shutterBtn=document.getElementById('shutterBtn');
+  if(shutterBtn && camInput){
+    shutterBtn.addEventListener('click',function(){camInput.click();});
+  }
+  if(camInput){
+    camInput.addEventListener('change',function(e){
+      var f=e.target.files&&e.target.files[0];
+      if(!f)return;
+      var r=new FileReader();
+      r.onload=function(){
+        var img=document.getElementById('shot');
+        img.src=r.result; img.classList.add('on');
+        document.getElementById('bottleMock').style.display='none';
+        document.getElementById('vfHint').style.display='none';
+        document.getElementById('camControls').style.display='none';
+        document.getElementById('previewControls').style.display='flex';
+      };
+      r.readAsDataURL(f);
+    });
+  }
+  function retake(){
+    var img=document.getElementById('shot');
+    if(img){img.classList.remove('on'); img.src='';}
+    if(camInput) camInput.value='';
+    var b=document.getElementById('bottleMock'); if(b) b.style.display='';
+    var h=document.getElementById('vfHint'); if(h) h.style.display='';
+    var cc=document.getElementById('camControls'); if(cc) cc.style.display='flex';
+    var pc=document.getElementById('previewControls'); if(pc) pc.style.display='none';
+  }
+</script>
+</body>
+</html>
