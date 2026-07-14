@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HELORA — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#000;
+    --card:#0A0D12;
+    --border:rgba(255,255,255,0.08);
+    --border-strong:rgba(255,255,255,0.14);
+    --text:#F2F4F7;
+    --muted:#8B93A1;
+    --faint:#5A616D;
+    --action-blue:#4E82C9;
+    --info-amber:#D39D35;
+    --font:'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--canvas);}
+  body{
+    font-family:var(--font);
+    color:var(--text);
+    min-height:100vh;
+    padding:
+      calc(env(safe-area-inset-top) + 40px)
+      calc(env(safe-area-inset-right) + 20px)
+      calc(env(safe-area-inset-bottom) + 48px)
+      calc(env(safe-area-inset-left) + 20px);
+    max-width:560px;
+    margin:0 auto;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- Masthead ---- */
+  .lockup{
+    font-weight:900;
+    font-size:26px;
+    letter-spacing:0.16em;
+    color:var(--text);
+  }
+  .tagline{
+    margin-top:8px;
+    font-weight:300;
+    font-size:15px;
+    letter-spacing:0.01em;
+    color:var(--muted);
+  }
+  .intro{
+    margin-top:28px;
+    font-weight:400;
+    font-size:14px;
+    line-height:1.55;
+    color:var(--faint);
+    padding-bottom:26px;
+    border-bottom:1px solid var(--border);
+  }
+
+  /* ---- Cards ---- */
+  .stack{
+    margin-top:26px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .card{
+    display:block;
+    text-decoration:none;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px 20px 22px;
+    color:inherit;
+    transition:border-color .18s ease, transform .12s ease;
+  }
+  .card:active{ transform:scale(0.988); border-color:var(--border-strong); }
+  @media (hover:hover){ .card:hover{ border-color:var(--border-strong); } }
+  .card:focus-visible{ outline:2px solid var(--action-blue); outline-offset:3px; }
+
+  .eyebrow{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    padding:4px 9px;
+    border-radius:999px;
+    margin-bottom:14px;
+  }
+  .eyebrow.scenario{ color:var(--info-amber); border:1px solid rgba(211,157,53,0.32); }
+  .eyebrow.screen{ color:var(--muted); border:1px solid var(--border-strong); }
+
+  .card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .card-title{
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:0.005em;
+    color:var(--text);
+  }
+  .arrow{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    color:var(--action-blue);
+  }
+  .blurb{
+    margin-top:11px;
+    font-weight:400;
+    font-size:14.5px;
+    line-height:1.58;
+    color:var(--muted);
+  }
+
+  /* ---- Footer ---- */
+  .foot{
+    margin-top:40px;
+    padding-top:24px;
+    border-top:1px solid var(--border);
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--faint);
+    font-weight:300;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .card{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="lockup">HELORA</div>
+    <div class="tagline">Clear guidance when it matters most</div>
+    <p class="intro">Interactive prototypes. Tap any card to open the flow. These are working previews of how HELORA behaves in the moments they're built for.</p>
+  </header>
+
+  <main class="stack">
+
+    <a class="card" href="home.html">
+      <span class="eyebrow screen">Screen</span>
+      <div class="card-head">
+        <span class="card-title">Home Screen</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">The starting point — the calm entry to everything else, and the five-option hub for when you can't talk.</p>
+    </a>
+
+    <a class="card" href="safe-journey.html">
+      <span class="eyebrow scenario">Scenario</span>
+      <div class="card-head">
+        <span class="card-title">Safe Journey</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">Michael heads out for the evening and shares his route. Laney watches quietly from home, seeing each leg pass by — nothing to get excited about, just a promise kept until he's home safe.</p>
+    </a>
+
+    <a class="card" href="need-help-now.html">
+      <span class="eyebrow screen">Screen</span>
+      <div class="card-head">
+        <span class="card-title">Need Help Now</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">Starts a 911 call with a short pre-connect window — Talk, Can't Talk, or Quick Reach. Staying silent safely proceeds on its own.</p>
+    </a>
+
+    <a class="card" href="i-cant-talk.html">
+      <span class="eyebrow scenario">Scenario</span>
+      <div class="card-head">
+        <span class="card-title">I Can't Talk</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">For a moment when speaking aloud isn't safe or possible. HELORA moves to Silent Mode — large, simple choices, and the option to stay quiet or sound an alarm.</p>
+    </a>
+
+    <a class="card" href="quick-reach.html">
+      <span class="eyebrow screen">Screen</span>
+      <div class="card-head">
+        <span class="card-title">Quick Reach</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">Reaches your trusted contacts in one tap, and shows you honestly which messages actually went through.</p>
+    </a>
+
+    <a class="card" href="responder-view.html">
+      <span class="eyebrow screen">Screen</span>
+      <div class="card-head">
+        <span class="card-title">Responder View</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">What a paramedic or nurse sees — your critical care details first, family and continuity second.</p>
+    </a>
+
+    <a class="card" href="rebecca.html">
+      <span class="eyebrow scenario">Scenario</span>
+      <div class="card-head">
+        <span class="card-title">Rebecca Demo</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">Richard is calling 911 for Rebecca, who needs emergency help. He uses HELORA to share Rebecca's location and critical information with responders. Her Responder View keeps everything they may need in one clear, accessible place — so Richard can stay focused on Rebecca while help is on the way.</p>
+    </a>
+
+    <a class="card" href="remote-emergency.html">
+      <span class="eyebrow scenario">Scenario</span>
+      <div class="card-head">
+        <span class="card-title">Remote Emergency</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <p class="blurb">A hiker on Rusk Mountain is caught ahead of a fast-moving wildfire, far from any street address. HELORA shows the terrain, their exact location, and the conditions around them — the ground truth a street address can't give a dispatcher.</p>
+    </a>
+
+  </main>
+
+  <footer class="foot">
+    Preview build. HELORA coaches and stages around a 911 call — it does not replace emergency services.
+  </footer>
+
+</body>
+</html>
