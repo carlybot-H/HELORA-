@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a1628" />
+  <meta name="format-detection" content="telephone=no">
+  <title>HELORA – Breather</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --canvas: #0a1628;
+      --white:  #FEFEFE;
+      --action-red: #CB3947;
+      --action-amber: #D39D35;
+      --action-blue: #4E82C9;
+      --breath: 4s;
+    }
+
+    html, body {
+      background-color: var(--canvas) !important;
+      background: var(--canvas) !important;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: max(56px, env(safe-area-inset-top) + 40px);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 100px);
+      font-family: 'Lato', sans-serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── BACK CONTROL ── */
+    .back {
+      position: absolute;
+      top: max(18px, env(safe-area-inset-top));
+      left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: rgba(255,255,255,0.55);
+      font-family: 'Lato', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 8px 6px;
+      z-index: 5;
+      text-decoration: none;
+    }
+    .back:active { opacity: 0.6; }
+    .back svg { width: 15px; height: 15px; stroke: rgba(255,255,255,0.55); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+    .bg-glow {
+      position: absolute;
+      top: 28%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(203,57,71,0.10) 0%, transparent 68%);
+      animation: bgBreath var(--breath) ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .icon-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      padding: 24px;
+    }
+
+    .halo {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      width: 58px;
+      height: 58px;
+      left: 50%;
+      top: 50%;
+      margin-left: -29px;
+      margin-top: -29px;
+    }
+    .halo-inner { background: radial-gradient(circle, rgba(203,57,71,0.80) 0%, rgba(203,57,71,0) 70%); animation: haloInner var(--breath) ease-in-out infinite; }
+    .halo-mid   { background: radial-gradient(circle, rgba(203,57,71,0.53) 0%, rgba(203,57,71,0) 70%); animation: haloMid var(--breath) ease-in-out infinite; }
+    .halo-outer { background: radial-gradient(circle, rgba(203,57,71,0.33) 0%, rgba(203,57,71,0) 70%); animation: haloOuter var(--breath) ease-in-out infinite; }
+
+    .dot-wrap { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; }
+
+    #helora-dot { animation: dotBreathe var(--breath) ease-in-out infinite; transform-origin: 90.89px 85.57px; }
+
+    .message-list { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .message-block { display: flex; flex-direction: column; align-items: center; }
+
+    .message {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.4;
+      text-align: center;
+      padding: 9px 40px;
+      user-select: none;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 1.8s ease, transform 1.8s ease;
+    }
+    .message.visible { opacity: 1; transform: translateY(0); }
+
+    .divider {
+      width: 36px;
+      height: 1px;
+      background: var(--action-amber);
+      border-radius: 1px;
+      margin-bottom: 2px;
+      transform-origin: center;
+      opacity: 0;
+      transform: scaleX(0);
+      transition: opacity 1.6s ease, transform 1.6s ease;
+    }
+    .divider.visible { opacity: 0.6; transform: scaleX(1); }
+
+    .final-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 6px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 2s ease, transform 2s ease;
+      pointer-events: none;
+    }
+    .final-block.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .final-block .divider { margin-bottom: 20px; }
+
+    .final-prompt {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--white);
+      text-align: center;
+      padding: 9px 40px;
+      user-select: none;
+      margin-bottom: 20px;
+    }
+
+    .button-row { display: flex; flex-direction: row; gap: 16px; }
+
+    .btn {
+      background: transparent;
+      border: 1px solid rgba(211,157,53,0.6);
+      border-radius: 24px;
+      color: var(--white);
+      font-family: 'Lato', sans-serif;
+      font-size: 17px;
+      font-weight: 400;
+      padding: 10px 32px;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .btn:active { background: rgba(211,157,53,0.2); border-color: var(--action-amber); }
+    .btn-notify { border-color: rgba(78,130,201,0.6); }
+    .btn-notify:active { background: rgba(78,130,201,0.2); border-color: var(--action-blue); }
+
+    @keyframes dotBreathe { 0%{transform:scale(1);} 50%{transform:scale(1.11);} 100%{transform:scale(1);} }
+    @keyframes haloInner { 0%{transform:scale(1);opacity:.55;} 50%{transform:scale(1.55);opacity:.22;} 100%{transform:scale(1);opacity:.55;} }
+    @keyframes haloMid   { 0%{transform:scale(1);opacity:.28;} 50%{transform:scale(1.90);opacity:.10;} 100%{transform:scale(1);opacity:.28;} }
+    @keyframes haloOuter { 0%{transform:scale(1);opacity:.12;} 50%{transform:scale(2.50);opacity:.03;} 100%{transform:scale(1);opacity:.12;} }
+    @keyframes bgBreath  { 0%,100%{opacity:.18;} 50%{opacity:.35;} }
+  </style>
+</head>
+<body>
+<div style="position:fixed;inset:0;background:#0a1628;z-index:-1;"></div>
+
+  <button class="back" onclick="window.history.back()" aria-label="Back">
+    <svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg>Back
+  </button>
+
+  <div class="bg-glow"></div>
+
+  <div class="icon-wrap">
+    <div class="halo halo-outer"></div>
+    <div class="halo halo-mid"></div>
+    <div class="halo halo-inner"></div>
+    <div class="dot-wrap">
+      <svg viewBox="0 0 180 180" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#ffffff" d="M34.33,173.91H4.76c-1.52,0-2.74-1.23-2.74-2.74V8.83c0-1.52,1.23-2.74,2.74-2.74h29.56
+          c1.52,0,2.74,1.23,2.74,2.74v162.33C37.07,172.68,35.84,173.91,34.33,173.91z"/>
+        <path fill="#ffffff" d="M175.24,173.91h-29.56c-1.52,0-2.74-1.23-2.74-2.74V8.83c0-1.52,1.23-2.74,2.74-2.74h29.56
+          c1.52,0,2.74,1.23,2.74,2.74v162.33C177.98,172.68,176.75,173.91,175.24,173.91z"/>
+        <circle id="helora-dot" cx="90.89" cy="85.57" r="28.86" fill="#CB3947"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="message-list">
+    <div class="message-block">
+      <div class="message" id="msg-0">Stay connected.</div>
+      <div class="divider" id="div-0"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-1">Focus on the dispatcher.</div>
+      <div class="divider" id="div-1"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-2">Dispatcher may pause<br>while coordinating help.</div>
+      <div class="divider" id="div-2"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-3">Help is on the way.</div>
+      <div class="divider" id="div-3"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-4">One step at a time.</div>
+      <div class="divider" id="div-4"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-5">Keep your eyes open.</div>
+      <div class="divider" id="div-5"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-6">Your location information remains available.</div>
+      <div class="divider" id="div-6"></div>
+    </div>
+    <div class="message-block">
+      <div class="message" id="msg-7">Conserve phone battery when possible&#8230;</div>
+    </div>
+
+    <div class="final-block" id="finalBlock">
+      <div class="divider" id="div-final"></div>
+      <div class="final-prompt">Let your people know?</div>
+      <div class="button-row">
+        <button class="btn btn-notify" id="btn-notify" onclick="handleChoice('notify')">Notify</button>
+        <button class="btn" id="btn-notnow" onclick="handleChoice('notNow')">Not Now</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── message reveal timing (demo timing) ──
+    const msgDelays = [1500, 4000, 6500, 9000, 11500, 14000, 16500, 19000];
+    const divDelays = [2500, 5000, 7500, 10000, 12500, 15000, 17500];
+
+    // Quick Reach sets this flag once the person actually taps SEND
+    // there (not just by visiting) — whether they reached it from 2B
+    // or from this screen. If it's already set, don't ask "let your
+    // people know?" again — just let the messages play out and move
+    // on to Focus via the same disconnect timer, prompt-free.
+    let quickReachVisited = false;
+    try {
+      quickReachVisited = sessionStorage.getItem('helora_quickReachVisited') === 'true';
+    } catch (e) {
+      quickReachVisited = false;
+    }
+
+    msgDelays.forEach((delay, i) => {
+      setTimeout(() => { document.getElementById('msg-' + i).classList.add('visible'); }, delay);
+    });
+    divDelays.forEach((delay, i) => {
+      setTimeout(() => { document.getElementById('div-' + i).classList.add('visible'); }, delay);
+    });
+
+    if (!quickReachVisited) {
+      setTimeout(() => {
+        document.getElementById('finalBlock').classList.add('visible');
+        setTimeout(() => { document.getElementById('div-final').classList.add('visible'); }, 500);
+      }, 20000);
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // PROVISO — DEMO ONLY
+    // This timer stands in for detecting that the 911 call has
+    // disconnected. In the native app, replace this with CallKit's
+    // CXCallObserver (the `hasEnded` property), which can observe
+    // system call state — including calls placed via tel: — without
+    // special entitlements. That API is native-only; it cannot be
+    // reached from a web page/Safari context, which is why this
+    // prototype uses a timer instead. Not guaranteed for background
+    // app state — would need on-device testing before relying on it.
+    // ────────────────────────────────────────────────────────────────
+    const DEMO_CALL_DISCONNECT_MS = 8000; // fires ~8s after the prompt appears
+    let disconnectTimer = setTimeout(() => {
+      window.location.href = 'focus.html';
+    }, 20000 + DEMO_CALL_DISCONNECT_MS);
+
+    function handleChoice(choice) {
+      document.getElementById('btn-notify').classList.remove('active');
+      document.getElementById('btn-notnow').classList.remove('active');
+      clearTimeout(disconnectTimer);
+
+      if (choice === 'notify') {
+        document.getElementById('btn-notify').classList.add('active');
+        try { sessionStorage.setItem('helora_qrReturn', 'focus.html'); } catch (e) {}
+        window.location.href = 'quick-reach.html';
+      } else {
+        document.getElementById('btn-notnow').classList.add('active');
+        // Not Now doesn't jump to Focus directly — the call is still
+        // presumed active, so we fall back to the same disconnect
+        // timer, just shortened since the user has already responded.
+        setTimeout(() => { window.location.href = 'focus.html'; }, 2000);
+      }
+    }
+  </script>
+
+</body>
+</html>
