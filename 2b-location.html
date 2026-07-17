@@ -160,7 +160,7 @@
     </div>
 
     <!-- QUICK REACH (blue) — fast path to alert people; if untapped, screen advances to Breather -->
-    <button class="quick" onclick="window.location.href='quick-reach.html'">
+    <button class="quick" onclick="try{sessionStorage.setItem('helora_qrReturn','breather.html');}catch(e){} window.location.href='quick-reach.html'"
       <span class="badge">
         <svg viewBox="0 0 24 24"><path d="M9 11a3.1 3.1 0 1 0 0-6.2A3.1 3.1 0 0 0 9 11zm0 1.5c-3 0-5.8 1.5-5.8 4.1V19h11.6v-2.4c0-2.6-2.8-4.1-5.8-4.1zm7-1.6a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4zm.3 1.5c.5.9.8 1.9.8 3v2.1h3.8v-2.1c0-2.2-2.5-3.5-4.6-3z"/></svg>
       </span>
