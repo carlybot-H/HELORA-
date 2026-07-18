@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>HELORA — Rebecca Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#000;
+    --card:#0A0D12;
+    --border:rgba(255,255,255,0.08);
+    --border-strong:rgba(255,255,255,0.14);
+    --text:#F2F4F7;
+    --muted:#8B93A1;
+    --faint:#5A616D;
+    --action-blue:#4E82C9;
+    --info-amber:#D39D35;
+    --font:'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--canvas); height:100%;}
+  body{
+    font-family:var(--font);
+    color:var(--text);
+    min-height:100vh;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- Top bar ---- */
+  .topbar{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:
+      calc(env(safe-area-inset-top) + 14px)
+      calc(env(safe-area-inset-right) + 16px)
+      14px
+      calc(env(safe-area-inset-left) + 16px);
+    border-bottom:1px solid var(--border);
+    background:var(--canvas);
+  }
+  .home-link{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    text-decoration:none;
+    color:var(--muted);
+    font-size:14px;
+    font-weight:400;
+    flex:0 0 auto;
+  }
+  .home-link svg{width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+  .home-link:active{ color:var(--text); }
+  .home-link:active svg{ stroke:var(--text); }
+
+  .scenario-label{
+    flex:1 1 auto;
+    text-align:center;
+    min-width:0;
+  }
+  .eyebrow{
+    display:block;
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--info-amber);
+  }
+  .scenario-title{
+    font-size:14.5px;
+    font-weight:700;
+    letter-spacing:0.005em;
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .spacer{ flex:0 0 auto; width:52px; } /* balances home-link width so title stays centered */
+
+  /* ---- Frame ---- */
+  .frame-wrap{
+    flex:1 1 auto;
+    position:relative;
+    background:var(--canvas);
+  }
+  #rebeccaFrame{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+    background:var(--canvas);
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .home-link{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="home-link" href="index.html" aria-label="All demos">
+      <svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg>Demos
+    </a>
+    <div class="scenario-label">
+      <span class="eyebrow">Scenario</span>
+      <span class="scenario-title">Richard &amp; Rebecca</span>
+    </div>
+    <div class="spacer" aria-hidden="true"></div>
+  </div>
+
+  <div class="frame-wrap">
+    <iframe id="rebeccaFrame" src="need-help-now.html" title="HELORA — Rebecca scenario, live flow" allow="geolocation"></iframe>
+  </div>
+
+</body>
+</html>
