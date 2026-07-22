@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +17,7 @@
       --action-red: #CB3947;
       --action-amber: #D39D35;
       --action-blue: #4E82C9;
+      --green-reassure: #8FB37E;
       --breath: 4s;
     }
 
@@ -174,6 +176,20 @@
     .btn-notify { border-color: rgba(78,130,201,0.6); }
     .btn-notify:active { background: rgba(78,130,201,0.2); border-color: var(--action-blue); }
 
+    .btn-continue {
+      background: rgba(143,179,126,0.15);
+      border: 1.5px solid rgba(143,179,126,0.6);
+      border-radius: 24px;
+      color: var(--white);
+      font-family: 'Lato', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 12px 40px;
+      cursor: pointer;
+    }
+    .btn-continue:active { background: rgba(143,179,126,0.28); }
+
     @keyframes dotBreathe { 0%{transform:scale(1);} 50%{transform:scale(1.11);} 100%{transform:scale(1);} }
     @keyframes haloInner { 0%{transform:scale(1);opacity:.55;} 50%{transform:scale(1.55);opacity:.22;} 100%{transform:scale(1);opacity:.55;} }
     @keyframes haloMid   { 0%{transform:scale(1);opacity:.28;} 50%{transform:scale(1.90);opacity:.10;} 100%{transform:scale(1);opacity:.28;} }
@@ -253,7 +269,7 @@
          for the disconnect timer. -->
     <div class="final-block" id="finalBlockContinueOnly">
       <div class="divider" id="div-final-continue"></div>
-      <button class="btn" id="btn-continue-only" onclick="handleChoice('continue')">Continue</button>
+      <button class="btn-continue" id="btn-continue-only" onclick="handleChoice('continue')">CONTINUE</button>
     </div>
   </div>
 
