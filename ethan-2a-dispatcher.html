@@ -7,29 +7,31 @@
 <title>HELORA — Screen 2A (Ethan) · 911 Dispatcher</title>
 <style>
   :root{
-    --black:#000;
+    /* v3 tokens — see DESIGN-TOKENS-v3.md */
+    --canvas:#000000;
     --card:#0A0D12;
-    --brand-navy:#253F6C;
-    --brand-red:#C5152A;
-    --act-red:#CB3947;
-    --act-blue:#4E82C9;
-    --act-amber:#D39D35;
-    --white:#F4F6FA;
-    --sub:#C9D2DE;
-    --line:rgba(255,255,255,.28);
+    --text:#F2F4F7;
+    --muted:#8B93A1;
+    --faint:#5A616D;
+    --border-strong: rgba(255,255,255,0.14);
+    --action-red:#CB3947;
+    --action-blue:#4E82C9;
+    --action-amber:#D39D35;
+    --action-red-glow:   rgba(203,57,71,0.30);
+    --action-blue-soft:  rgba(78,130,201,0.15);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{background:var(--black);}
+  html,body{background:var(--canvas);}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
-    color:var(--white);
+    color:var(--text);
   }
   .screen{
     max-width:430px;
     margin:0 auto;
     min-height:100svh;
-    background:var(--black);
+    background:var(--canvas);
     padding:10px 16px calc(18px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
@@ -49,14 +51,14 @@
     left:4%;
     top:33%;
     display:flex;align-items:center;gap:3px;
-    color:var(--brand-red);
+    color:var(--action-red);
     font-weight:500;font-size:15px;
     cursor:pointer;
     background:transparent;
     border:none;
     font-family:inherit;
   }
-  .back svg{width:14px;height:14px;stroke:var(--brand-red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .back svg{width:14px;height:14px;stroke:var(--action-red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
   .status{
     display:flex;align-items:center;justify-content:center;gap:9px;
     padding:2px 0 0;
@@ -67,18 +69,18 @@
   .status.ended{opacity:0;max-height:0;}
   .status .dot{
     width:11px;height:11px;border-radius:50%;
-    background:var(--act-red);
-    box-shadow:0 0 10px -1px rgba(203,57,71,.65);
+    background:var(--action-red);
+    box-shadow:0 0 10px -1px var(--action-red-glow);
   }
   .status .label{
-    color:var(--act-red);
+    color:var(--action-red);
     font-size:clamp(18px,2.8vh,22px);
     font-weight:500;
     letter-spacing:.01em;
   }
   .hero{
     background:var(--card);
-    border:2px solid var(--act-amber);
+    border:2px solid var(--action-amber);
     border-radius:22px;
     padding:clamp(18px,3vh,26px) 20px clamp(22px,3.6vh,30px);
     text-align:center;
@@ -88,7 +90,7 @@
     font-size:clamp(15px,2.2vh,18px);
     font-weight:400;
     letter-spacing:.06em;
-    color:var(--white);
+    color:var(--text);
     margin-bottom:6px;
   }
   .hero .addr-street{
@@ -110,7 +112,7 @@
   }
   .hero .divider{
     height:1px;
-    background:var(--line);
+    background:var(--border-strong);
     margin:clamp(16px,2.8vh,24px) 4px;
   }
   .hero .num{
@@ -145,24 +147,24 @@
   }
   .act .rule{
     height:1px;
-    background:var(--line);
+    background:var(--border-strong);
     margin:clamp(10px,1.8vh,15px) 6px;
   }
   .act .sub{
     font-size:clamp(16px,2.6vh,21px);
     font-weight:400;
-    color:var(--white);
+    color:var(--text);
     line-height:1.15;
   }
-  .act.blue{border-color:var(--act-blue);}
-  .act.blue .title{color:var(--act-blue);}
-  .act.amber{border-color:var(--act-amber);}
-  .act.amber .title{color:var(--act-amber);}
+  .act.blue{border-color:var(--action-blue);}
+  .act.blue .title{color:var(--action-blue);}
+  .act.amber{border-color:var(--action-amber);}
+  .act.amber .title{color:var(--action-amber);}
   .continue-btn{
     width:100%;
     background:transparent;
-    color:var(--act-blue);
-    box-shadow:inset 0 0 0 2px var(--act-blue);
+    color:var(--action-blue);
+    box-shadow:inset 0 0 0 2px var(--action-blue);
     border:none;
     border-radius:18px;
     padding:clamp(14px,2.2vh,18px) 22px;
@@ -177,7 +179,7 @@
     cursor:pointer;
     transition:transform .15s ease,background .15s ease;
   }
-  .continue-btn:active{transform:scale(.985);background:rgba(78,130,201,.12);}
+  .continue-btn:active{transform:scale(.985);background:var(--action-blue-soft);}
   .continue-btn svg{width:20px;height:20px;flex:0 0 auto;}
   .demo-bar{
     margin-top:auto;
@@ -186,13 +188,13 @@
   }
   .demo-tag{
     font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-    color:rgba(201,210,222,.5);
+    color:var(--faint);
   }
   .demo-btn{
     font-family:inherit;font-size:13px;letter-spacing:.03em;
-    color:var(--sub);
+    color:var(--muted);
     background:transparent;
-    border:1px dashed rgba(255,255,255,.35);
+    border:1px dashed var(--border-strong);
     border-radius:999px;
     padding:8px 18px;
     cursor:pointer;
