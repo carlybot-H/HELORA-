@@ -31,6 +31,7 @@
     --action-blue:#4E82C9;    /* muted blue sibling — joins the muted set */
     --action-amber:#D39D35;   /* brighter muted gold */
     --green-reassure:#8FB37E; /* locked HELORA confirm/reassure green */
+    --trail-green:#3FA34D;    /* locked HELORA "sent" state for send buttons */
 
     /* ===== surfaces ===== */
     --sl-white:#FEFEFE;
@@ -251,8 +252,8 @@
   .sl-send{
     display:flex; align-items:center; justify-content:center; gap:14px;
     width:100%;
-    background:var(--brand-navy);
-    border:1.5px solid var(--action-blue);
+    background:var(--action-red);
+    border:1.5px solid var(--action-red);
     border-radius:13px;
     height:58px;
     cursor:pointer;
@@ -264,10 +265,10 @@
   .sl-send svg{ width:30px; height:30px; }
   .sl-send:hover{ filter:brightness(1.12); }
   .sl-send:active{ transform:translateY(1px); }
-  .sl-send:focus-visible{ outline:2px solid var(--action-blue); outline-offset:2px; }
+  .sl-send:focus-visible{ outline:2px solid var(--action-red); outline-offset:2px; }
   .sl-send.is-sent{
-    background:var(--green-reassure);
-    border-color:var(--green-reassure);
+    background:var(--trail-green);
+    border-color:var(--trail-green);
     cursor:default;
   }
   .sl-send.is-sent:hover{ filter:none; }
