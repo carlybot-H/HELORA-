@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HELORA Design Tokens v4 — Swatch Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: #FAFAF8;
+    color: #14161A;
+    padding: 32px 20px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 40px;
+  }
+  header .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #5A616D;
+    margin-bottom: 6px;
+  }
+  header h1 {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #5A616D;
+    line-height: 1.5;
+    max-width: 62ch;
+  }
+
+  .palette {
+    margin-bottom: 56px;
+  }
+  .palette-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    border-bottom: 1px solid #E3E1DA;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+  .palette-head h2 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .palette-head .scope {
+    font-size: 12px;
+    color: #8B93A1;
+    font-style: italic;
+  }
+
+  .group {
+    margin-bottom: 26px;
+  }
+  .group-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8B93A1;
+    margin-bottom: 10px;
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+  }
+
+  .swatch {
+    border: 1px solid #E3E1DA;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .swatch .chip {
+    height: 64px;
+    width: 100%;
+    position: relative;
+  }
+  .swatch .chip.bordered {
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+  .swatch .meta {
+    padding: 9px 11px 11px;
+  }
+  .swatch .token {
+    font-size: 12.5px;
+    font-weight: 700;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+  }
+  .swatch .hex {
+    font-size: 12px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    color: #5A616D;
+    margin-top: 2px;
+  }
+  .swatch .note {
+    font-size: 11.5px;
+    color: #8B93A1;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+  .swatch.scoped .meta { border-top: 2px solid #D39D35; }
+
+  .flag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: 6px;
+  }
+  .flag.scoped { background: rgba(211,157,53,0.15); color: #7D5C1C; }
+  .flag.future { background: rgba(106,151,214,0.15); color: #2F4A73; }
+
+  .callout {
+    background: #F1F0EA;
+    border-left: 3px solid #7D5C1C;
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #3A3D44;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 20px;
+  }
+  .callout strong { color: #14161A; }
+
+  footer {
+    margin-top: 50px;
+    padding-top: 16px;
+    border-top: 1px solid #E3E1DA;
+    font-size: 12px;
+    color: #8B93A1;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">HELORA — Design Tokens</div>
+  <h1>v4 Swatch Reference</h1>
+  <p>Companion to DESIGN-TOKENS-v4.md. Two separate, parallel palettes — Black (default, all screens except focus/breather) and Ivory (scoped to focus/breather only). Ivory is not a reskin of Black's unified amber/green; see the callout below §3.</p>
+</header>
+
+<section class="palette">
+  <div class="palette-head">
+    <h2>1 · Black Palette</h2>
+    <span class="scope">default — every screen except focus &amp; breather</span>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Canvas &amp; Surface</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip bordered" style="background:#000000"></div><div class="meta"><div class="token">--canvas</div><div class="hex">#000000</div><div class="note">Global canvas, every screen except focus/breather</div></div></div>
+      <div class="swatch scoped"><div class="chip bordered" style="background:#0A1628"></div><div class="meta"><div class="token">--canvas-calm</div><div class="hex">#0A1628</div><div class="note">Focus + Breather only, dark mode</div><span class="flag scoped">Scoped</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#0A0D12"></div><div class="meta"><div class="token">--card</div><div class="hex">#0A0D12</div><div class="note">Card / panel fill</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#15181E"></div><div class="meta"><div class="token">--card-alt</div><div class="hex">#15181E</div><div class="note">Secondary surface — share button, insets</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Text (solid hex, not opacity-on-white)</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip bordered" style="background:#F2F4F7"></div><div class="meta"><div class="token">--text</div><div class="hex">#F2F4F7</div><div class="note">Primary — body, titles</div></div></div>
+      <div class="swatch"><div class="chip bordered" style="background:#8B93A1"></div><div class="meta"><div class="token">--muted</div><div class="hex">#8B93A1</div><div class="note">Secondary — subtitles, labels</div></div></div>
+      <div class="swatch"><div class="chip bordered" style="background:#5A616D"></div><div class="meta"><div class="token">--faint</div><div class="hex">#5A616D</div><div class="note">Tertiary — hints, footnotes, timestamps</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Action (operational — black/dark surfaces only)</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip" style="background:#CB3947"></div><div class="meta"><div class="token">--action-red</div><div class="hex">#CB3947</div><div class="note">Urgency</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#4E82C9"></div><div class="meta"><div class="token">--action-blue</div><div class="hex">#4E82C9</div><div class="note">Primary action</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#D39D35"></div><div class="meta"><div class="token">--action-amber</div><div class="hex">#D39D35</div><div class="note">Information</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Brand (identity — white/light surfaces only)</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip bordered" style="background:#253F6C"></div><div class="meta"><div class="token">--brand-navy</div><div class="hex">#253F6C</div><div class="note">Text + blue/primary-action role on light surfaces (no separate brand-blue)</div></div></div>
+      <div class="swatch"><div class="chip bordered" style="background:#C5152A"></div><div class="meta"><div class="token">--brand-red</div><div class="hex">#C5152A</div><div class="note">Urgency, white/light surfaces</div></div></div>
+      <div class="swatch"><div class="chip bordered" style="background:#CC9933"></div><div class="meta"><div class="token">--brand-amber</div><div class="hex">#CC9933</div><div class="note">Black-palette unified brand amber (see §3 for Ivory's separate two-tier amber)</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Green — locked, single family (black palette only)</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip" style="background:#5B9A78"></div><div class="meta"><div class="token">--calm-green</div><div class="hex">#5B9A78</div><div class="note">ALL calm / positive / confirm states, black/dark surfaces</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#4B6B4A"></div><div class="meta"><div class="token">--calm-green-deep</div><div class="hex">#4B6B4A</div><div class="note">Optional — deeper border/glow variant only</div></div></div>
+      <div class="swatch scoped"><div class="chip" style="background:#3FA34D"></div><div class="meta"><div class="token">--trail-green</div><div class="hex">#3FA34D</div><div class="note">Map trails + Quick Reach confirmations ONLY</div><span class="flag scoped">Scoped</span></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Future — documented, not yet wired</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip" style="background:#6A97D6"></div><div class="meta"><div class="token">--location-blue</div><div class="hex">#6A97D6</div><div class="note">Parked — unrelated to the ivory brand-navy/blue-role decision in §3</div><span class="flag future">Future</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="palette">
+  <div class="palette-head">
+    <h2>2 · Ivory Palette</h2>
+    <span class="scope">scoped — focus &amp; breather only</span>
+  </div>
+
+  <div class="callout">
+    <strong>Not a reskin.</strong> The Black palette's amber and green were unified into single tokens in v3. Ivory keeps its own values instead — a two-tier amber (text vs. decorative) and its own calm-green — confirmed intentional by Carol, not drift to be collapsed.
+  </div>
+
+  <div class="group">
+    <div class="group-label">Canvas</div>
+    <div class="swatch-grid">
+      <div class="swatch scoped"><div class="chip bordered" style="background:#FFFFF0"></div><div class="meta"><div class="token">--canvas</div><div class="hex">#FFFFF0</div><div class="note">Ivory — confirmed by Alex</div><span class="flag scoped">Scoped</span></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Text &amp; Identity</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip bordered" style="background:#253F6C"></div><div class="meta"><div class="token">--brand-navy</div><div class="hex">#253F6C</div><div class="note">Primary text + blue/primary-action role (e.g. Notify button)</div></div></div>
+      <div class="swatch"><div class="chip bordered" style="background:#C5152A"></div><div class="meta"><div class="token">--brand-red</div><div class="hex">#C5152A</div><div class="note">Urgency actions, e.g. Call button</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Amber — two-tier split</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip bordered" style="background:#7D5C1C"></div><div class="meta"><div class="token">--brand-amber</div><div class="hex">#7D5C1C</div><div class="note">Text / labels — AA compliant</div></div></div>
+      <div class="swatch"><div class="chip bordered" style="background:#DAA60B"></div><div class="meta"><div class="token">--brand-amber-accent</div><div class="hex">#DAA60B</div><div class="note">Decorative only — dividers/rules, 2px min, full opacity</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Green — ivory's own value</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="chip bordered" style="background:#517042"></div><div class="meta"><div class="token">--brand-calm-green</div><div class="hex">#517042</div><div class="note">Calm / continue / reassurance states on ivory</div></div></div>
+      <div class="swatch scoped"><div class="chip bordered" style="background:#2F7939"></div><div class="meta"><div class="token">--brand-trail-green</div><div class="hex">#2F7939</div><div class="note">Map + Quick Reach confirmations ONLY — same scarcity rule as Black's trail-green</div><span class="flag scoped">Scoped</span></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Reference for DESIGN-TOKENS-v4.md. Black palette carried forward unchanged from v3. Ivory palette scoped to <code>focus-ivory.html</code> / <code>breather-ivory.html</code> only — the rest of the app's Day Mode remains TBD (v4 §7).
+</footer>
+
+</body>
+</html>
