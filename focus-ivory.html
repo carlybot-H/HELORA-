@@ -293,14 +293,14 @@
     <div class="final-block" id="finalBlockContact">
       <div class="final-prompt">Let your people know?</div>
       <div class="button-row">
-        <button class="btn btn-notify" onclick="try{sessionStorage.setItem('helora_qrReturn','responder-view.html');}catch(e){} window.location.href='quick-reach.html'">Notify</button>
-        <button class="btn" onclick="window.location.href='responder-view.html'">Not Now</button>
+        <button class="btn btn-notify" onclick="cancelAutoAdvance(); try{sessionStorage.setItem('helora_qrReturn','responder-view.html');}catch(e){} window.location.href='quick-reach.html'">Notify</button>
+        <button class="btn" onclick="cancelAutoAdvance(); window.location.href='responder-view.html'">Not Now</button>
       </div>
     </div>
 
     <!-- Shown instead, if Quick Reach was already visited -->
     <div class="final-block" id="finalBlockContinue">
-      <button class="btn-continue" onclick="window.location.href='responder-view.html'">CONTINUE</button>
+      <button class="btn-continue" onclick="cancelAutoAdvance(); window.location.href='responder-view.html'">CONTINUE</button>
     </div>
   </div>
 
@@ -351,7 +351,29 @@
     setTimeout(() => {
       const blockId = quickReachVisited ? 'finalBlockContinue' : 'finalBlockContact';
       document.getElementById(blockId).classList.add('visible');
+      startAutoAdvance();
     }, 10500);
+
+    // ── Auto-advance safety net ──
+    // If nobody is looking at the screen when the final buttons appear,
+    // don't strand them here. 20s after the buttons show, move on to
+    // responder-view.html automatically — regardless of which final
+    // block is showing. We deliberately do NOT auto-fire "Notify": that
+    // sends messages to the person's contacts, and that's a choice a
+    // person should make on purpose, not something that happens because
+    // they weren't looking at their phone.
+    let autoAdvanceTimer = null;
+    function startAutoAdvance() {
+      autoAdvanceTimer = setTimeout(() => {
+        window.location.href = 'responder-view.html';
+      }, 8000);
+    }
+    function cancelAutoAdvance() {
+      if (autoAdvanceTimer) {
+        clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = null;
+      }
+    }
   </script>
 
 </body>
