@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a1628" />
+  <meta name="theme-color" content="#FFFFF0" />
   <meta name="format-detection" content="telephone=no">
   <title>HELORA – Ethan Breather</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet" />
@@ -12,11 +11,13 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     :root {
-      --canvas: #0a1628;
-      --white:  #FEFEFE;
-      --action-red: #CB3947;
-      --action-amber: #D39D35;
-      --action-blue: #4E82C9;
+      --canvas: #FFFFF0; /* ivory — confirmed by Alex */
+      --text-primary: #253F6C; /* brand-navy */
+      --brand-red: #C5152A;
+      --brand-amber: #7D5C1C; /* text/labels — AA compliant */
+      --brand-amber-accent: #DAA60B; /* decorative only, 2px min — LOCKED */
+      --brand-calm-green: #517042;
+      --brand-blue: #253F6C; /* = brand-navy, confirmed by Carol as the brand-blue for Notify */
       --breath: 4s;
     }
 
@@ -48,7 +49,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      color: rgba(255,255,255,0.55);
+      color: rgba(37,63,108,0.55);
       font-family: 'Lato', sans-serif;
       font-size: 15px;
       font-weight: 400;
@@ -60,7 +61,7 @@
       text-decoration: none;
     }
     .back:active { opacity: 0.6; }
-    .back svg { width: 15px; height: 15px; stroke: rgba(255,255,255,0.55); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .back svg { width: 15px; height: 15px; stroke: rgba(37,63,108,0.55); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
     .bg-glow {
       position: absolute;
@@ -70,7 +71,7 @@
       width: 420px;
       height: 420px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(203,57,71,0.10) 0%, transparent 68%);
+      background: radial-gradient(circle, rgba(197,21,42,0.10) 0%, transparent 68%);
       animation: bgBreath var(--breath) ease-in-out infinite;
       pointer-events: none;
     }
@@ -95,9 +96,9 @@
       margin-left: -29px;
       margin-top: -29px;
     }
-    .halo-inner { background: radial-gradient(circle, rgba(203,57,71,0.80) 0%, rgba(203,57,71,0) 70%); animation: haloInner var(--breath) ease-in-out infinite; }
-    .halo-mid   { background: radial-gradient(circle, rgba(203,57,71,0.53) 0%, rgba(203,57,71,0) 70%); animation: haloMid var(--breath) ease-in-out infinite; }
-    .halo-outer { background: radial-gradient(circle, rgba(203,57,71,0.33) 0%, rgba(203,57,71,0) 70%); animation: haloOuter var(--breath) ease-in-out infinite; }
+    .halo-inner { background: radial-gradient(circle, rgba(197,21,42,0.80) 0%, rgba(197,21,42,0) 70%); animation: haloInner var(--breath) ease-in-out infinite; }
+    .halo-mid   { background: radial-gradient(circle, rgba(197,21,42,0.53) 0%, rgba(197,21,42,0) 70%); animation: haloMid var(--breath) ease-in-out infinite; }
+    .halo-outer { background: radial-gradient(circle, rgba(197,21,42,0.33) 0%, rgba(197,21,42,0) 70%); animation: haloOuter var(--breath) ease-in-out infinite; }
 
     .dot-wrap { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; }
 
@@ -109,7 +110,7 @@
     .message {
       font-size: 20px;
       font-weight: 400;
-      color: var(--white);
+      color: var(--text-primary);
       line-height: 1.4;
       text-align: center;
       padding: 9px 40px;
@@ -122,8 +123,8 @@
 
     .divider {
       width: 36px;
-      height: 1px;
-      background: var(--action-amber);
+      height: 2px;
+      background: var(--brand-amber-accent);
       border-radius: 1px;
       margin-bottom: 2px;
       transform-origin: center;
@@ -131,7 +132,7 @@
       transform: scaleX(0);
       transition: opacity 0.9s ease, transform 0.9s ease;
     }
-    .divider.visible { opacity: 0.6; transform: scaleX(1); }
+    .divider.visible { opacity: 1; transform: scaleX(1); }
 
     .final-block {
       display: flex;
@@ -149,7 +150,7 @@
     .final-prompt {
       font-size: 20px;
       font-weight: 400;
-      color: var(--white);
+      color: var(--text-primary);
       text-align: center;
       padding: 9px 40px;
       user-select: none;
@@ -160,9 +161,9 @@
 
     .btn {
       background: transparent;
-      border: 1px solid rgba(211,157,53,0.6);
+      border: 1px solid rgba(218,166,11,0.6);
       border-radius: 24px;
-      color: var(--white);
+      color: var(--text-primary);
       font-family: 'Lato', sans-serif;
       font-size: 17px;
       font-weight: 400;
@@ -171,9 +172,23 @@
       letter-spacing: 0.02em;
       transition: background 0.3s ease, border-color 0.3s ease;
     }
-    .btn:active { background: rgba(211,157,53,0.2); border-color: var(--action-amber); }
-    .btn-notify { border-color: rgba(78,130,201,0.6); }
-    .btn-notify:active { background: rgba(78,130,201,0.2); border-color: var(--action-blue); }
+    .btn:active { background: rgba(218,166,11,0.2); border-color: var(--brand-amber-accent); }
+    .btn-notify { border-color: rgba(37,63,108,0.6); }
+    .btn-notify:active { background: rgba(37,63,108,0.2); border-color: var(--brand-blue); }
+
+    .btn-continue {
+      background: rgba(81,112,66,0.15);
+      border: 1.5px solid rgba(81,112,66,0.6);
+      border-radius: 24px;
+      color: var(--text-primary);
+      font-family: 'Lato', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 12px 40px;
+      cursor: pointer;
+    }
+    .btn-continue:active { background: rgba(81,112,66,0.28); }
 
     @keyframes dotBreathe { 0%{transform:scale(1);} 50%{transform:scale(1.11);} 100%{transform:scale(1);} }
     @keyframes haloInner { 0%{transform:scale(1);opacity:.55;} 50%{transform:scale(1.55);opacity:.22;} 100%{transform:scale(1);opacity:.55;} }
@@ -183,7 +198,7 @@
   </style>
 </head>
 <body>
-<div style="position:fixed;inset:0;background:#0a1628;z-index:-1;"></div>
+<div style="position:fixed;inset:0;background:#FFFFF0;z-index:-1;"></div>
 
   <button class="back" onclick="window.history.back()" aria-label="Back">
     <svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg>Back
@@ -197,11 +212,12 @@
     <div class="halo halo-inner"></div>
     <div class="dot-wrap">
       <svg viewBox="0 0 180 180" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#ffffff" d="M34.33,173.91H4.76c-1.52,0-2.74-1.23-2.74-2.74V8.83c0-1.52,1.23-2.74,2.74-2.74h29.56
-          c1.52,0,2.74,1.23,2.74,2.74v162.33C37.07,172.68,35.84,173.91,34.33,173.91z"/>
-        <path fill="#ffffff" d="M175.24,173.91h-29.56c-1.52,0-2.74-1.23-2.74-2.74V8.83c0-1.52,1.23-2.74,2.74-2.74h29.56
-          c1.52,0,2.74,1.23,2.74,2.74v162.33C177.98,172.68,176.75,173.91,175.24,173.91z"/>
-        <circle id="helora-dot" cx="90.89" cy="85.57" r="28.86" fill="#CB3947"/>
+        <!-- Source: Alex's purchased asset, Helora fav icons-04.svg — embedded verbatim, not reconstructed -->
+        <path class="st0" fill="#253F6C" d="M34.33,173.91H4.76c-1.52,0-2.74-1.23-2.74-2.74V8.83c0-1.52,1.23-2.74,2.74-2.74h29.56
+	c1.52,0,2.74,1.23,2.74,2.74v162.33C37.07,172.68,35.84,173.91,34.33,173.91z"/>
+        <path class="st0" fill="#253F6C" d="M175.24,173.91h-29.56c-1.52,0-2.74-1.23-2.74-2.74V8.83c0-1.52,1.23-2.74,2.74-2.74h29.56
+	c1.52,0,2.74,1.23,2.74,2.74v162.33C177.98,172.68,176.75,173.91,175.24,173.91z"/>
+        <circle id="helora-dot" class="st1" cx="90.89" cy="85.57" r="28.86" fill="#C5152A"/>
       </svg>
     </div>
   </div>
@@ -254,7 +270,7 @@
          for the disconnect timer. -->
     <div class="final-block" id="finalBlockContinueOnly">
       <div class="divider" id="div-final-continue"></div>
-      <button class="btn" id="btn-continue-only" onclick="handleChoice('continue')">Continue</button>
+      <button class="btn-continue" id="btn-continue-only" onclick="handleChoice('continue')">CONTINUE</button>
     </div>
   </div>
 
