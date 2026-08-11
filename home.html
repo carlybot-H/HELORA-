@@ -200,6 +200,40 @@
     stroke-linejoin:round;
   }
 
+  /* Index/back button */
+  .index-btn{
+    position:fixed;
+    left:20px;
+    bottom:calc(20px + env(safe-area-inset-bottom));
+    height:44px;
+    padding:0 16px 0 14px;
+    border-radius:22px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+  }
+
+  .index-btn svg{
+    width:20px;
+    height:20px;
+    stroke:#fff;
+    fill:none;
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    flex-shrink:0;
+  }
+
+  .index-btn span{
+    color:#fff;
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+
   @media (prefers-reduced-motion: reduce){
     .card{ transition:none; }
   }
@@ -271,6 +305,11 @@
   </div>
 
 </div>
+
+<a class="index-btn" href="index.html" aria-label="All screens">
+  <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+  <span>All Screens</span>
+</a>
 
 <button class="share-btn" aria-label="Share">
   <svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 13v6a2 2 0 002 2h10a2 2 0 002-2v-6"/></svg>
