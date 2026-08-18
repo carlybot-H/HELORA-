@@ -191,6 +191,64 @@
     justify-content: space-between;
   }
 
+  .contact-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .contact-row + .contact-row { margin-top: 10px; }
+  .contact-name { color: #FFFFFF; font-size: 16px; }
+  .contact-remove {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .contact-list.single-contact .contact-remove { display: none; }
+  .add-contact-row { margin-top: 10px; }
+  .add-contact-row.hidden,
+  .add-contact-input-row.hidden { display: none; }
+  .add-contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: #4E82C9;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 8px 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .add-contact-input-row { margin-top: 10px; }
+  .add-contact-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .add-contact-cancel,
+  .add-contact-confirm {
+    flex: 1;
+    min-height: 42px;
+    border-radius: 10px;
+    border: 1.5px solid #262B33;
+    background: transparent;
+    color: #C7CCD3;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .add-contact-confirm {
+    border-color: #4E82C9;
+    background: rgba(78, 130, 201, 0.20);
+    color: #FFFFFF;
+  }
+
   .toggle-field {
     margin-top: 14px;
   }
@@ -361,12 +419,27 @@
         <div class="icon-circle" style="background:#8FB37E;">
           <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </div>
-        <div class="field-label">Who should check on you?</div>
+        <div class="field-label" id="safetyContactLabel">Safety contact</div>
       </div>
-      <div class="card calm">
-        <div class="select-input">
-          <span style="color:#FFFFFF;">Laney</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A6270" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+      <div class="contact-list" id="contactList">
+        <div class="card calm contact-row" data-name="Laney">
+          <span class="contact-name">Laney</span>
+          <button type="button" class="contact-remove" aria-label="Remove contact">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A6270" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="add-contact-row" id="addContactRow">
+        <button type="button" class="add-contact-btn" id="addContactBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4E82C9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+          Add another person
+        </button>
+      </div>
+      <div class="add-contact-input-row hidden" id="addContactInputRow">
+        <input type="text" class="text-input" id="newContactName" placeholder="Enter name" maxlength="40">
+        <div class="add-contact-actions">
+          <button type="button" class="add-contact-cancel" id="addContactCancel">Cancel</button>
+          <button type="button" class="add-contact-confirm" id="addContactConfirm">Add</button>
         </div>
       </div>
     </div>
@@ -451,6 +524,72 @@
           });
         });
       });
+    })();
+
+    (function() {
+      var MAX_CONTACTS = 3;
+      var list = document.getElementById('contactList');
+      var label = document.getElementById('safetyContactLabel');
+      var addRow = document.getElementById('addContactRow');
+      var addBtn = document.getElementById('addContactBtn');
+      var inputRow = document.getElementById('addContactInputRow');
+      var nameInput = document.getElementById('newContactName');
+      var confirmBtn = document.getElementById('addContactConfirm');
+      var cancelBtn = document.getElementById('addContactCancel');
+
+      function wireRemove(row) {
+        row.querySelector('.contact-remove').addEventListener('click', function() {
+          row.remove();
+          refresh();
+        });
+      }
+
+      function makeRow(name) {
+        var row = document.createElement('div');
+        row.className = 'card calm contact-row';
+        row.setAttribute('data-name', name);
+        row.innerHTML = '<span class="contact-name"></span>' +
+          '<button type="button" class="contact-remove" aria-label="Remove contact">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A6270" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>';
+        row.querySelector('.contact-name').textContent = name;
+        wireRemove(row);
+        return row;
+      }
+
+      function refresh() {
+        var count = list.children.length;
+        label.textContent = count > 1 ? 'Safety contacts' : 'Safety contact';
+        list.classList.toggle('single-contact', count <= 1);
+        addRow.classList.toggle('hidden', count >= MAX_CONTACTS);
+      }
+
+      Array.prototype.forEach.call(list.querySelectorAll('.contact-row'), wireRemove);
+
+      addBtn.addEventListener('click', function() {
+        addRow.classList.add('hidden');
+        inputRow.classList.remove('hidden');
+        nameInput.value = '';
+        nameInput.focus();
+      });
+
+      cancelBtn.addEventListener('click', function() {
+        inputRow.classList.add('hidden');
+        refresh();
+      });
+
+      confirmBtn.addEventListener('click', function() {
+        var name = nameInput.value.trim();
+        if (!name) { nameInput.focus(); return; }
+        list.appendChild(makeRow(name));
+        inputRow.classList.add('hidden');
+        refresh();
+      });
+
+      nameInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); confirmBtn.click(); }
+      });
+
+      refresh();
     })();
   </script>
 
