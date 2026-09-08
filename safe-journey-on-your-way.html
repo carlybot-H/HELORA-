@@ -35,6 +35,12 @@
     --btn-text-on-tint: #FFFFFF;
     --btn-green-solid: #8FB37E;
     --btn-amber-solid: #D39D35;
+
+    /* Sound Alarm — provisional tokens from the alarm mockup, not yet
+       locked. Deep midnight purple at rest, brightening as it arms. */
+    --alarm-rest: #2A2158;
+    --alarm-arming: #4B3796;
+    --alarm-triggered: #7C5CE8;
   }
 
   /* ---------- IVORY MODE ---------- */
@@ -53,12 +59,19 @@
     --accent-amber-text-on-fill: #8A6A0A;
     --accent-red: #C5152A;
     --calm-green: #517042;
+    --trail-green: #3FA34D;
 
     --amber-fill-tint: rgba(218,166,11,0.20);
     --green-fill-tint: rgba(81,112,66,0.16);
     --btn-text-on-tint: #253F6C;
-    --btn-green-solid: #3FA34D;   /* approved, 19px+ bold text meets 3:1 large-text AA */
+    --btn-green-solid: #517042;   /* calm-green resting state — distinct from trail-green confirmed state */
     --btn-amber-solid: #B8860B;   /* approved, 19px+ bold text meets 3:1 large-text AA */
+
+    /* Sound Alarm — same provisional tokens as black canvas; not yet
+       reviewed specifically for ivory. */
+    --alarm-rest: #2A2158;
+    --alarm-arming: #4B3796;
+    --alarm-triggered: #7C5CE8;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -85,6 +98,15 @@
     position: relative;
     box-shadow: 0 30px 60px rgba(0,0,0,0.35);
     transition: background 0.25s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
   }
@@ -227,26 +249,126 @@
     color: #FFFFFF;
   }
 
+  .btn-primary.confirmed {
+    background: var(--trail-green);
+    border-color: var(--trail-green);
+  }
+
   .btn-amber-tint {
     background: var(--btn-amber-solid);
     border-color: var(--btn-amber-solid);
     color: #FFFFFF;
   }
 
+  .btn:disabled { cursor: default; opacity: 0.9; }
+  @keyframes gentle-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  .btn.nudge { animation: gentle-pulse 0.8s ease-in-out 2; }
+
   .btn svg { width: 20px; height: 20px; flex-shrink: 0; }
 
-  .emergency-link {
-    text-align: center;
-    padding: 4px 0 18px;
+  /* ---------- Need-help section: 911 / Quick Reach / Sound Alarm ---------- */
+  .need-help-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 12px 2px;
+    padding: 0 20px;
     flex-shrink: 0;
   }
-  .emergency-link a {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-red);
-    text-decoration: none;
+  .emergency-row {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+    flex-shrink: 0;
   }
-  .emergency-link a:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+  .btn-911, .btn-quickreach {
+    flex: 1;
+    height: 56px;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn-911 { background: var(--accent-red); font-size: 16px; }
+  .btn-quickreach { background: var(--accent-blue); }
+  .btn-911:focus-visible, .btn-quickreach:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+  /* Gap that signals "different category of action" between emergency
+     buttons and the calmer Sound Alarm below. */
+  .category-gap {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+  .category-gap::before {
+    content: "";
+    width: 100%;
+    height: 1px;
+    background: var(--divider);
+  }
+
+  .alarm-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 24px;
+    flex-shrink: 0;
+  }
+  .alarm-caption {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .alarm-btn {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: var(--alarm-rest);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: width .3s ease, height .3s ease, background-color .3s ease;
+    touch-action: none;
+    user-select: none;
+    position: relative;
+    cursor: pointer;
+  }
+  .alarm-btn::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 2px solid var(--alarm-arming);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .alarm-btn.primed::after,
+  .alarm-btn.arming::after,
+  .alarm-btn.triggered::after { opacity: 1; }
+  .alarm-btn.arming { width: 168px; height: 168px; background: var(--alarm-arming); }
+  .alarm-btn.triggered {
+    width: 204px; height: 204px;
+    background: var(--alarm-triggered);
+    box-shadow: 0 0 28px 2px rgba(124,92,232,0.45);
+  }
 
   /* ---------- Overlay shared ---------- */
   .overlay-backdrop {
@@ -265,7 +387,7 @@
     left: 0; right: 0; bottom: 0;
     background: var(--surface);
     border-radius: 24px 24px 0 0;
-    padding: 10px 24px 28px;
+    padding: 14px 26px 34px;
     transform: translateY(100%);
     transition: transform 0.25s ease;
     z-index: 11;
@@ -274,29 +396,29 @@
   .sheet.open { transform: translateY(0); }
 
   .sheet-handle {
-    width: 40px; height: 4px;
+    width: 44px; height: 5px;
     background: var(--divider);
     border-radius: 4px;
-    margin: 8px auto 18px;
+    margin: 10px auto 20px;
   }
   .sheet-title {
-    font-size: 18px;
+    font-size: 21px;
     font-weight: 900;
     color: var(--text-primary);
-    margin: 0 0 4px;
+    margin: 0 0 5px;
   }
   .sheet-sub {
-    font-size: 13.5px;
+    font-size: 15px;
     color: var(--text-muted);
-    margin: 0 0 18px;
+    margin: 0 0 22px;
   }
 
   .menu-row {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 15px 4px;
+    gap: 16px;
+    padding: 20px 6px;
     background: none;
     border: none;
     border-bottom: 1px solid var(--divider);
@@ -307,23 +429,23 @@
   .menu-row:last-of-type { border-bottom: none; }
   .menu-row:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
   .menu-row .icon {
-    width: 34px; height: 34px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     background: var(--amber-fill-tint);
     color: var(--accent-amber);
     flex-shrink: 0;
   }
-  .menu-row .icon svg { width: 17px; height: 17px; }
+  .menu-row .icon svg { width: 20px; height: 20px; }
   .menu-row .icon.red { background: rgba(203,57,71,0.16); color: var(--accent-red); }
   .menu-row .txt { display: flex; flex-direction: column; }
-  .menu-row .txt strong { font-size: 15px; color: var(--text-primary); font-weight: 700; }
-  .menu-row .txt span { font-size: 12.5px; color: var(--text-muted); margin-top: 1px; }
+  .menu-row .txt strong { font-size: 17px; color: var(--text-primary); font-weight: 700; }
+  .menu-row .txt span { font-size: 13.5px; color: var(--text-muted); margin-top: 2px; }
 
   .sheet-close {
     position: absolute;
-    top: 18px; right: 18px;
-    width: 30px; height: 30px;
+    top: 16px; right: 16px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     border: none;
     background: var(--divider);
@@ -331,6 +453,24 @@
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
   }
+
+  .input-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0 0 8px 2px;
+  }
+  .text-input {
+    width: 100%;
+    background: var(--surface-raised);
+    border: 1px solid var(--divider);
+    border-radius: var(--radius-sm);
+    padding: 16px 14px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: 'Lato', sans-serif;
+  }
+  .text-input::placeholder { color: var(--text-faint); }
+  .text-input:focus { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
   .sheet-close:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
 
   /* ---------- Time wheel picker ---------- */
@@ -382,6 +522,12 @@
     color: var(--text-muted);
   }
 
+  .btn-danger {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #FFFFFF;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .sheet, .overlay-backdrop, .btn { transition: none; }
   }
@@ -397,6 +543,7 @@
     <button id="btnIvory" class="active" onclick="setTheme('ivory')">Ivory</button>
   </div>
 
+  <div class="scroll-content">
   <div class="topbar">
     <button class="back-btn" aria-label="Back">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -411,27 +558,41 @@
   </div>
 
   <div class="status-block">
-    <h1>Michael is on the way</h1>
-    <p><span class="watcher">Laney</span> is watching this journey and will be notified on arrival.</p>
-    <div class="eta-pill">
+    <h1 id="statusHeadline">Michael is on the way</h1>
+    <p id="statusSub"><span class="watcher">Laney</span> is watching this journey and will be notified on arrival.</p>
+    <div class="eta-pill" id="etaPill">
       <span class="label">Arriving by</span>
-      <span class="time">7:45 PM</span>
+      <span class="time" id="etaTime">7:45 PM</span>
     </div>
   </div>
 
   <div class="actions">
-    <button class="btn btn-primary" onclick="alert('Arrival confirmed — journey would end here.')">
+    <button class="btn btn-primary" id="arrivedBtn" onclick="confirmArrival(false)">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      I've arrived
+      <span id="arrivedLabel">I've arrived</span>
     </button>
-    <button class="btn btn-amber-tint" onclick="openSheet('plans')">
+    <button class="btn btn-amber-tint" id="plansBtn" onclick="openSheet('plans')">
       <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       Plans changed?
     </button>
   </div>
 
-  <div class="emergency-link">
-    <a href="#">Need help now</a>
+  <div class="need-help-label">Need help?</div>
+
+  <div class="emergency-row">
+    <a href="tel:911" class="btn-911">Call 911 Now</a>
+    <a href="quick-reach.html" class="btn-quickreach">Quick Reach</a>
+  </div>
+
+  <div class="category-gap"></div>
+
+  <div class="alarm-zone">
+    <div class="alarm-caption">
+      <div>Double-tap to sound alarm</div>
+      <div>Single tap to turn alarm off</div>
+    </div>
+    <button class="alarm-btn" id="alarmBtn">Sound<br>Alarm</button>
+  </div>
   </div>
 
   <!-- ===== Overlay 1: Plans Changed menu ===== -->
@@ -442,7 +603,14 @@
     </button>
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">Plans changed?</h2>
-    <p class="sheet-sub">Update your journey without ending it.</p>
+    <p class="sheet-sub">Update your journey, or end it if you need to.</p>
+
+    <button class="menu-row" onclick="closeSheet('plans'); openSheet('stop')">
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 12 2a7 7 0 0 1 7 7.5C19 14.5 12 21 12 21z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.8"/></svg>
+      </span>
+      <span class="txt"><strong>Add a stop</strong><span>Let Laney know about a detour</span></span>
+    </button>
 
     <button class="menu-row" onclick="closeSheet('plans'); openSheet('time')">
       <span class="icon">
@@ -451,21 +619,14 @@
       <span class="txt"><strong>Update arrival time</strong><span>Give yourself more time on the road</span></span>
     </button>
 
-    <button class="menu-row" onclick="alert('Would open stop-adding flow.')">
-      <span class="icon">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 12 2a7 7 0 0 1 7 7.5C19 14.5 12 21 12 21z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.8"/></svg>
-      </span>
-      <span class="txt"><strong>Add a stop</strong><span>Let Laney know about a detour</span></span>
-    </button>
-
-    <button class="menu-row" onclick="alert('Would confirm early arrival and end journey.')">
+    <button class="menu-row" onclick="closeSheet('plans'); openSheet('endEarly')">
       <span class="icon">
         <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
       <span class="txt"><strong>I'm safe — end journey early</strong><span>Close this Safe Journey now</span></span>
     </button>
 
-    <button class="menu-row" onclick="alert('Would confirm journey cancellation.')">
+    <button class="menu-row" onclick="closeSheet('plans'); openSheet('cancelJourney')">
       <span class="icon red">
         <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </span>
@@ -491,7 +652,74 @@
 
     <div class="sheet-btn-row">
       <button class="btn btn-ghost" onclick="closeSheet('time')">Cancel</button>
-      <button class="btn btn-primary" onclick="alert('New arrival time saved.'); closeSheet('time')">Save time</button>
+      <button class="btn btn-primary" onclick="saveTime()">Save time</button>
+    </div>
+  </div>
+
+  <!-- ===== Overlay 3: Add a Stop ===== -->
+  <div class="overlay-backdrop" id="backdropStop" onclick="closeSheet('stop')"></div>
+  <div class="sheet" id="sheetStop">
+    <button class="sheet-close" onclick="closeSheet('stop')" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Add a stop</h2>
+    <p class="sheet-sub">Laney will see this update on your journey.</p>
+
+    <div class="input-label">Stop location</div>
+    <input class="text-input" type="text" id="stopInput" placeholder="Enter an address or place">
+
+    <div class="sheet-btn-row" style="margin-top:22px;">
+      <button class="btn btn-ghost" onclick="document.getElementById('stopInput').value=''; closeSheet('stop')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitStop()">Add stop</button>
+    </div>
+  </div>
+
+  <!-- ===== Overlay 4: Stop Added — chain into time update ===== -->
+  <div class="overlay-backdrop" id="backdropChain" onclick="closeSheet('chain')"></div>
+  <div class="sheet" id="sheetChain">
+    <button class="sheet-close" onclick="closeSheet('chain')" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Stop added</h2>
+    <p class="sheet-sub">Laney will be notified. Want to update your arrival time too?</p>
+
+    <div class="sheet-btn-row" style="margin-top:22px;">
+      <button class="btn btn-ghost" onclick="closeSheet('chain')">Skip</button>
+      <button class="btn btn-primary" onclick="closeSheet('chain'); openSheet('time')">Update time</button>
+    </div>
+  </div>
+
+  <!-- ===== Overlay 5: I'm safe — end journey early ===== -->
+  <div class="overlay-backdrop" id="backdropEndEarly" onclick="closeSheet('endEarly')"></div>
+  <div class="sheet" id="sheetEndEarly">
+    <button class="sheet-close" onclick="closeSheet('endEarly')" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">End journey early?</h2>
+    <p class="sheet-sub">Laney will be notified you're safe, and this journey will close.</p>
+
+    <div class="sheet-btn-row" style="margin-top:22px;">
+      <button class="btn btn-ghost" onclick="closeSheet('endEarly')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeSheet('endEarly'); endJourney('safe')">I'm safe</button>
+    </div>
+  </div>
+
+  <!-- ===== Overlay 6: Cancel Safe Journey ===== -->
+  <div class="overlay-backdrop" id="backdropCancelJourney" onclick="closeSheet('cancelJourney')"></div>
+  <div class="sheet" id="sheetCancelJourney">
+    <button class="sheet-close" onclick="closeSheet('cancelJourney')" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Cancel Safe Journey?</h2>
+    <p class="sheet-sub">Laney will be notified this journey was canceled.</p>
+
+    <div class="sheet-btn-row" style="margin-top:22px;">
+      <button class="btn btn-primary" onclick="closeSheet('cancelJourney')">Keep journey</button>
+      <button class="btn btn-danger" onclick="closeSheet('cancelJourney'); endJourney('canceled')">Cancel journey</button>
     </div>
   </div>
 
@@ -516,6 +744,44 @@
   }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
+  function submitStop() {
+    const input = document.getElementById('stopInput');
+    const val = input.value.trim();
+    if (!val) {
+      input.focus();
+      return;
+    }
+    input.value = '';
+    closeSheet('stop');
+    openSheet('chain');
+  }
+
+  // Shared by "I'm safe — end journey early" and "Cancel Safe Journey".
+  // The journey is over either way: stop watching location, retire the
+  // arrival/plans controls, and replace the status text honestly for
+  // which path was taken. "Need help now" is never touched here — 911
+  // access stays live regardless of journey state.
+  function endJourney(kind) {
+    arrivalConfirmed = true;
+    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    clearTimeout(dwellTimer);
+    clearTimeout(fallbackTimer);
+
+    document.getElementById('etaPill').style.display = 'none';
+    document.getElementById('arrivedBtn').style.display = 'none';
+    document.getElementById('plansBtn').style.display = 'none';
+
+    const headline = document.getElementById('statusHeadline');
+    const sub = document.getElementById('statusSub');
+    if (kind === 'safe') {
+      headline.textContent = "You're safe";
+      sub.textContent = 'Laney has been notified. This Safe Journey has ended.';
+    } else {
+      headline.textContent = 'Safe Journey canceled';
+      sub.textContent = 'Laney has been notified this journey was canceled.';
+    }
+  }
+
   // ---- build time wheels ----
   function buildWheel(id, items, startIndex) {
     const el = document.getElementById(id);
@@ -533,6 +799,201 @@
   buildWheel('wheelHour', hours, 6);   // defaults near 7
   buildWheel('wheelMin', mins, 45);    // defaults near :45
   buildWheel('wheelPeriod', ['AM','PM'], 1);
+
+  function getWheelSelectedText(id) {
+    const el = document.getElementById(id);
+    const mid = el.querySelector('.wheel-item.mid');
+    if (mid) return mid.textContent;
+    // Fallback in case scroll snap hasn't fired yet for this element.
+    const idx = Math.max(0, Math.min(Math.round(el.scrollTop / 42), el.children.length - 1));
+    return el.children[idx] ? el.children[idx].textContent : '';
+  }
+
+  function saveTime() {
+    const h = getWheelSelectedText('wheelHour');
+    const m = getWheelSelectedText('wheelMin');
+    const p = getWheelSelectedText('wheelPeriod');
+    document.getElementById('etaTime').textContent = `${h}:${m} ${p}`;
+    closeSheet('time');
+  }
+
+  // ==================================================================
+  // Auto-arrival detection
+  // Watches the traveler's location against the destination. Within
+  // ARRIVAL_RADIUS_M for the full DWELL_MS window (not just passing
+  // through, e.g. a car dropping someone off) counts as arrival, and
+  // the "I've arrived" button confirms itself quietly — no alert, no
+  // extra tap. If detection hasn't fired after FALLBACK_MS, we give
+  // the button a single gentle nudge toward manual confirmation.
+  // ==================================================================
+
+  // TEMP: destination coordinates — wire to the real journey data once
+  // the trip-creation flow ("Where are you going?") passes the
+  // destination lat/lng through to this screen.
+  const DEMO_DESTINATION = { lat: 42.0668, lng: -72.4959 };
+
+  const ARRIVAL_RADIUS_M = 40;        // meters
+  const DWELL_MS = 75000;             // dwell window, spec'd as 60–90s
+  const FALLBACK_MS = 5 * 60 * 1000;  // nudge toward manual confirm after 5 min
+
+  const arrivedBtn = document.getElementById('arrivedBtn');
+  const arrivedLabel = document.getElementById('arrivedLabel');
+
+  let arrivalConfirmed = false;
+  let watchId = null;
+  let dwellTimer = null;
+  let fallbackTimer = null;
+  let insideRadius = false;
+
+  function distMeters(lat1, lng1, lat2, lng2) {
+    const R = 6371000;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function onPosition(pos) {
+    if (arrivalConfirmed) return;
+    const d = distMeters(pos.coords.latitude, pos.coords.longitude, DEMO_DESTINATION.lat, DEMO_DESTINATION.lng);
+    if (d <= ARRIVAL_RADIUS_M) {
+      if (!insideRadius) {
+        insideRadius = true;
+        dwellTimer = setTimeout(() => confirmArrival(true), DWELL_MS);
+      }
+    } else if (insideRadius) {
+      // Left the radius before the dwell window completed — likely
+      // just passing through, not arriving. Reset and keep watching.
+      insideRadius = false;
+      clearTimeout(dwellTimer);
+    }
+  }
+
+  function onPositionError() {
+    // Fail silently — the manual "I've arrived" tap is always available
+    // regardless of GPS accuracy or permission state.
+  }
+
+  function nudgeManualConfirm() {
+    if (arrivalConfirmed) return;
+    arrivedBtn.classList.add('nudge');
+    setTimeout(() => arrivedBtn.classList.remove('nudge'), 1600);
+  }
+
+  function confirmArrival(auto) {
+    if (arrivalConfirmed) return;
+    arrivalConfirmed = true;
+    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    clearTimeout(dwellTimer);
+    clearTimeout(fallbackTimer);
+    arrivedBtn.disabled = true;
+    arrivedBtn.classList.add('confirmed');
+    arrivedLabel.textContent = 'Arrived';
+    if (!auto) {
+      alert('Arrival confirmed — journey would end here.');
+    }
+  }
+
+  if ('geolocation' in navigator) {
+    watchId = navigator.geolocation.watchPosition(onPosition, onPositionError, {
+      enableHighAccuracy: true,
+      maximumAge: 10000,
+      timeout: 15000
+    });
+  }
+  fallbackTimer = setTimeout(nudgeManualConfirm, FALLBACK_MS);
+
+  // Dev/testing only — no visible UI, not part of the shipped screen.
+  // Trigger from the browser console to preview the auto-confirm state
+  // without needing to physically be within range: __simulateArrival()
+  window.__simulateArrival = () => confirmArrival(true);
+
+  // ==================================================================
+  // Sound Alarm — carried over verbatim from the standalone alarm
+  // mockup. Siren is the same Web Audio oscillator used in
+  // i-cant-talk.html (sawtooth wave, wobbling 760–1120Hz) so it's one
+  // alarm sound across HELORA, not a second one to learn.
+  // ==================================================================
+  const alarmBtn = document.getElementById('alarmBtn');
+  let triggered = false;
+  let primed = false;
+  let primeTimer = null;
+
+  var audioCtx = null, oscNode = null, gainNode = null, sirenTimer = null;
+  function startSiren() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      oscNode = audioCtx.createOscillator();
+      gainNode = audioCtx.createGain();
+      oscNode.type = 'sawtooth';
+      oscNode.frequency.value = 760;
+      gainNode.gain.value = 0.06;
+      oscNode.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscNode.start();
+      var up = true;
+      sirenTimer = setInterval(function () {
+        if (!oscNode) return;
+        var target = up ? 1120 : 760;
+        oscNode.frequency.linearRampToValueAtTime(target, audioCtx.currentTime + 0.5);
+        up = !up;
+      }, 500);
+    } catch (e) { /* audio unavailable */ }
+  }
+  function stopSiren() {
+    if (sirenTimer) { clearInterval(sirenTimer); sirenTimer = null; }
+    if (oscNode) { try { oscNode.stop(); } catch (e) {} oscNode.disconnect(); oscNode = null; }
+    if (gainNode) { gainNode.disconnect(); gainNode = null; }
+  }
+
+  function growToTriggered() {
+    alarmBtn.classList.add('arming');
+    setTimeout(() => {
+      alarmBtn.classList.remove('arming');
+      alarmBtn.classList.add('triggered');
+      alarmBtn.innerHTML = 'Alarm<br>Sounding';
+      triggered = true;
+      startSiren();
+      if ('vibrate' in navigator) navigator.vibrate(200);
+    }, 260);
+  }
+
+  function stopAlarm() {
+    alarmBtn.classList.remove('triggered');
+    stopSiren();
+    if ('vibrate' in navigator) navigator.vibrate([40, 30, 40]);
+    setTimeout(() => {
+      triggered = false;
+      alarmBtn.innerHTML = 'Sound<br>Alarm';
+    }, 260);
+  }
+
+  function handleTapWhileOff() {
+    if (!primed) {
+      primed = true;
+      alarmBtn.classList.add('primed');
+      if ('vibrate' in navigator) navigator.vibrate(15);
+      primeTimer = setTimeout(() => {
+        primed = false;
+        alarmBtn.classList.remove('primed');
+      }, 500);
+    } else {
+      clearTimeout(primeTimer);
+      primed = false;
+      alarmBtn.classList.remove('primed');
+      growToTriggered();
+    }
+  }
+
+  alarmBtn.addEventListener('click', () => {
+    if (triggered) {
+      // One tap always stops it — no double-tap needed to close.
+      stopAlarm();
+    } else {
+      handleTapWhileOff();
+    }
+  });
 </script>
 
 </body>
