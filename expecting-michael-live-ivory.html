@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- EXPECTING MICHAEL · LIVE IVORY v2.1 · Oct 21 -->
+<!-- EXPECTING MICHAEL · LIVE IVORY v2.2 · Oct 22 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F7F7F2">
@@ -78,6 +78,13 @@
   .ci .state{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--card-line);font-size:17px;line-height:1.35}
   .ci .state strong{font-weight:900}
 
+  /* Arrived (appears after Michael taps "I've arrived") */
+  .arrived{padding:14px 16px;border-color:#3FA34D;margin-bottom:12px}
+  .arrived[hidden]{display:none}
+  .arrived .lab{color:var(--calm-green)}
+  .arrived .big{margin:4px 0 0;font-size:24px;line-height:1.2;font-weight:900}
+  .arrived .when{margin:4px 0 0;font-size:17px;color:var(--text-2)}
+
   /* Primary action */
   .cta{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;min-height:64px;padding:0 20px;border-radius:12px;background:var(--action-blue);color:#fff;font-size:24px;font-weight:700}
   .cta img{width:32px;height:32px;display:block}
@@ -135,6 +142,12 @@
     <p class="eyebrow">Safe Journey</p>
     <h1>Expecting Someone?</h1>
     <p class="traveler">Michael</p>
+  </section>
+
+  <section class="card arrived" id="arrived-card" aria-live="polite" hidden>
+    <p class="lab">Arrived</p>
+    <p class="big">Michael has arrived</p>
+    <p class="when" id="arrived-time"></p>
   </section>
 
   <div class="stack">
@@ -214,7 +227,7 @@
     <p>If Michael misses his scheduled 8:30&nbsp;PM check-in, we&rsquo;ll notify you at 9:00&nbsp;PM.</p>
   </section>
 
-<div style="text-align:center;font-size:11px;color:rgba(37,63,108,.40);padding:18px 0 4px;font-family:Lato,-apple-system,sans-serif">Expecting Michael · Live · Ivory · v2.1 · Oct 21</div>
+<div style="text-align:center;font-size:11px;color:rgba(37,63,108,.40);padding:18px 0 4px;font-family:Lato,-apple-system,sans-serif">Expecting Michael · Live · Ivory · v2.2 · Oct 22</div>
 </main>
 
 <div class="backdrop" id="backdrop"></div>
@@ -318,6 +331,23 @@
   Array.prototype.forEach.call(sheet.querySelectorAll('.opt'),function(o){
     o.addEventListener('click',function(){ send(o.getAttribute('data-q')); });
   });
+
+  /* ---------- Arrival (demo stitching) ----------
+     On Your Way stores helora.sj.arrivedAt when the traveler taps "I've arrived".
+     In the real app this arrives from HELORA's notification service instead.
+     Once arrived: show the arrived card, stop the check-in timers, disable
+     check-ins ("Journey complete") and drop the overdue notice, which no
+     longer applies. */
+  (function(){
+    var at=null; try{ at=localStorage.getItem('helora.sj.arrivedAt'); }catch(e){}
+    if(!at) return;
+    var d=new Date(at); if(isNaN(d)) return;
+    clearAll(); waiting=false;
+    document.getElementById('arrived-time').textContent='At '+clock(d)+'.';
+    document.getElementById('arrived-card').hidden=false;
+    var n=document.querySelector('.notice'); if(n) n.style.display='none';
+    setBtn('Journey complete',false);
+  })();
 })();
 </script>
 </body>

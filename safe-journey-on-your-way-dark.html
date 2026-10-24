@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- ON YOUR WAY v2.0 · Sep 26 — full screen, HELORA header, Laney check-in card, Sound Alarm v2 purple -->
+<!-- ON YOUR WAY v2.1 · Oct 22 — full screen, HELORA header, Laney check-in card, Sound Alarm v2 purple -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HELORA — Safe Journey: On Your Way</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -133,6 +133,9 @@
   @keyframes ck-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   .checkin.arrive { animation: ck-in .3s ease-out; }
 
+  /* Theme switch (demo): opens the matching light/dark twin of this screen */
+  .theme-switch { display: block; flex-shrink: 0; margin: 0 auto; padding: 12px 20px; min-height: 44px; text-align: center; font-size: 14px; font-weight: 700; color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .theme-switch:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: 6px; }
   .version-tag { text-align: center; font-size: 11px; color: var(--text-faint); padding: 0 0 max(12px, env(safe-area-inset-bottom)); flex-shrink: 0; }
 
   /* ---------- Top bar (retired in v2.0; header above replaces it) ---------- */
@@ -599,7 +602,8 @@
     </div>
     <button class="alarm-btn" id="alarmBtn">Sound<br>Alarm</button>
   </div>
-  <div class="version-tag">On Your Way · Black · v2.0 · Sep 26</div>
+  <a class="theme-switch" href="safe-journey-on-your-way.html">View light version</a>
+  <div class="version-tag">On Your Way · Black · v2.1 · Oct 22</div>
   </div>
 
   <!-- ===== Overlay 1: Plans Changed menu ===== -->

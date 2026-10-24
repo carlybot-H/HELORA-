@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- SAFE JOURNEY IVORY v2.5 · Oct 21 -->
+<!-- SAFE JOURNEY IVORY v2.6 · Oct 22 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -102,6 +102,10 @@
   .sj-expect{--accent:var(--amber);--accent-text:var(--amber-text);}
   .sj-walk{--accent:var(--green);}
 
+  /* Theme switch (demo): opens the light/dark twin of the hub */
+  .theme-switch{display:block;margin:22px auto 0;padding:12px 20px;min-height:44px;text-align:center;font-size:15px;font-weight:700;color:var(--subtitle);text-decoration:underline;text-underline-offset:3px;}
+  .theme-switch:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px;}
+
   @media (prefers-reduced-motion: reduce){
     .sj-card,.sj-back{transition:none;}
   }
@@ -181,7 +185,9 @@
       </div>
     </div>
 
-<div style="text-align:center;font-size:11px;color:rgba(37,63,108,.40);padding:18px 0 4px;font-family:Lato,-apple-system,sans-serif">Safe Journey · Ivory · v2.5 · Oct 21</div>
+<a class="theme-switch" href="safe-journey.html">View dark version</a>
+
+<div style="text-align:center;font-size:11px;color:rgba(37,63,108,.40);padding:18px 0 4px;font-family:Lato,-apple-system,sans-serif">Safe Journey · Ivory · v2.6 · Oct 22</div>
   </main>
 </div>
 
