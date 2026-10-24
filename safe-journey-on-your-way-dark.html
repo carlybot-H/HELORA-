@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- ON YOUR WAY v2.1 · Oct 22 — full screen, HELORA header, Laney check-in card, Sound Alarm v2 purple -->
+<!-- ON YOUR WAY v2.2 · Oct 22 — full screen, HELORA header, Laney check-in card, Sound Alarm v2 purple -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HELORA — Safe Journey: On Your Way</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,6 +132,24 @@
   .checkin .ck-done strong { font-weight: 900; }
   @keyframes ck-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   .checkin.arrive { animation: ck-in .3s ease-out; }
+
+  /* Arrival closing state: "Your people have been notified" dropdown + Done */
+  .btn[hidden], .notified[hidden], .notified .nt-list[hidden] { display: none; }
+  a.btn { text-decoration: none; }
+  .notified { margin: 14px 20px 0; border: 1.5px solid var(--trail-green); border-radius: var(--radius-md); background: var(--surface); overflow: hidden; flex-shrink: 0; }
+  .notified .nt-toggle { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 12px 16px; background: none; border: 0; font: inherit; color: var(--text-primary); text-align: left; cursor: pointer; }
+  .notified .nt-toggle:focus-visible { outline: 3px solid var(--accent-blue); outline-offset: -3px; }
+  .notified .nt-text { flex: 1; min-width: 0; }
+  .notified .nt-title { display: block; font-size: 19px; font-weight: 900; line-height: 1.2; }
+  .notified .nt-sub { display: block; margin-top: 2px; font-size: 15px; color: var(--text-muted); }
+  .notified .nt-chev { width: 11px; height: 11px; flex: none; margin-right: 4px; border-right: 2.5px solid var(--text-muted); border-bottom: 2.5px solid var(--text-muted); transform: rotate(45deg) translate(-2px,-2px); transition: transform .18s ease; }
+  .notified .nt-toggle[aria-expanded="true"] .nt-chev { transform: rotate(-135deg) translate(-2px,-2px); }
+  .notified .nt-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--divider); }
+  .notified .nt-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; font-size: 18px; }
+  .notified .nt-list li + li { border-top: 1px solid var(--divider); }
+  .notified .nt-name { font-weight: 700; }
+  .notified .nt-stat { font-size: 15px; color: var(--text-muted); }
+  @media (prefers-reduced-motion: reduce) { .notified .nt-chev { transition: none; } }
 
   /* Theme switch (demo): opens the matching light/dark twin of this screen */
   .theme-switch { display: block; flex-shrink: 0; margin: 0 auto; padding: 12px 20px; min-height: 44px; text-align: center; font-size: 14px; font-weight: 700; color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
@@ -567,6 +585,20 @@
     </div>
   </div>
 
+  <section class="notified" id="notified" aria-live="polite" hidden>
+    <button class="nt-toggle" type="button" id="ntToggle" aria-expanded="false" aria-controls="ntList">
+      <span class="nt-text">
+        <span class="nt-title">Your people have been notified</span>
+        <span class="nt-sub" id="ntTime"></span>
+      </span>
+      <span class="nt-chev" aria-hidden="true"></span>
+    </button>
+    <ul class="nt-list" id="ntList" hidden>
+      <li><span class="nt-name">Laney</span><span class="nt-stat" id="ntLaney"></span></li>
+      <li><span class="nt-name">Jeffrey</span><span class="nt-stat" id="ntJeffrey"></span></li>
+    </ul>
+  </section>
+
   <section class="checkin" id="checkin" aria-live="polite" hidden>
     <p class="ck-label">Laney is checking in</p>
     <p class="ck-q" id="ckQ"></p>
@@ -584,6 +616,7 @@
       <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       Plans changed?
     </button>
+    <a class="btn btn-primary" id="doneBtn" href="safe-journey.html" hidden>Done</a>
   </div>
 
   <div class="need-help-label">Need help?</div>
@@ -603,7 +636,7 @@
     <button class="alarm-btn" id="alarmBtn">Sound<br>Alarm</button>
   </div>
   <a class="theme-switch" href="safe-journey-on-your-way.html">View light version</a>
-  <div class="version-tag">On Your Way · Black · v2.1 · Oct 22</div>
+  <div class="version-tag">On Your Way · Black · v2.2 · Oct 22</div>
   </div>
 
   <!-- ===== Overlay 1: Plans Changed menu ===== -->
@@ -737,6 +770,8 @@
 </div>
 
 <script>
+  // A fresh visit to this screen is a new journey: clear any earlier arrival flag (demo stitching).
+  try { localStorage.removeItem('helora.sj.arrivedAt'); } catch (e) {}
 
   function openSheet(name) {
     document.getElementById('backdrop' + cap(name)).classList.add('open');
@@ -778,7 +813,10 @@
 
     const headline = document.getElementById('statusHeadline');
     const sub = document.getElementById('statusSub');
-    if (kind === 'safe') {
+    if (kind === 'arrived') {
+      headline.textContent = "You've arrived";
+      sub.textContent = 'This Safe Journey has ended.';
+    } else if (kind === 'safe') {
       headline.textContent = "You're safe";
       sub.textContent = 'Laney has been notified. This Safe Journey has ended.';
     } else {
@@ -886,19 +924,58 @@
     setTimeout(() => arrivedBtn.classList.remove('nudge'), 1600);
   }
 
-  function confirmArrival(auto) {
-    if (arrivalConfirmed) return;
-    arrivalConfirmed = true;
+  // Two strictly separate states (per the arrival spec):
+  //  - AUTO (geofence + dwell): "reached the area". Prompt only. It never
+  //    ends the journey and never notifies anyone.
+  //  - MANUAL ("I've arrived" tap): "safe / complete". Only this ends the
+  //    journey and sends the arrival notice.
+  let areaReached = false;
+  function reachedArea() {
+    if (areaReached || arrivalConfirmed) return;
+    areaReached = true;
     if (watchId !== null) navigator.geolocation.clearWatch(watchId);
     clearTimeout(dwellTimer);
     clearTimeout(fallbackTimer);
-    arrivedBtn.disabled = true;
-    arrivedBtn.classList.add('confirmed');
-    arrivedLabel.textContent = 'Arrived';
-    if (!auto) {
-      alert('Arrival confirmed — journey would end here.');
-    }
+    document.getElementById('statusSub').textContent = 'You\u2019ve reached the area. Tap \u201CI\u2019ve arrived\u201D when you get there.';
+    arrivedBtn.classList.add('nudge');
+    setTimeout(() => arrivedBtn.classList.remove('nudge'), 1600);
   }
+
+  function confirmArrival(auto) {
+    if (arrivalConfirmed) return;
+    if (auto) { reachedArea(); return; }
+    completeArrival();
+  }
+
+  // Manual "I've arrived": end the journey, then show who was notified.
+  // PROVISO — DEMO ONLY: nothing is actually sent here. In the real app
+  // HELORA's own notification service delivers this to every contact on the
+  // journey (Laney and Jeffrey) and the screen lists only the contacts the
+  // service confirms it reached; anyone it could not reach should read
+  // "Couldn't reach — try calling" instead of "Notified" (honest verbs).
+  // The alarm and the emergency row are deliberately left untouched: they
+  // stay live after arrival.
+  function completeArrival() {
+    const now = new Date();
+    const at = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    // Demo stitching: lets the Expecting Someone screens show "arrived" in the same browser.
+    try { localStorage.setItem('helora.sj.arrivedAt', now.toISOString()); } catch (e) {}
+    endJourney('arrived');
+    document.getElementById('ntTime').textContent = 'Today at ' + at;
+    document.getElementById('ntLaney').textContent = 'Notified at ' + at;
+    document.getElementById('ntJeffrey').textContent = 'Notified at ' + at;
+    document.getElementById('notified').hidden = false;
+    const done = document.getElementById('doneBtn');
+    done.hidden = false;
+    done.focus({ preventScroll: true });
+  }
+  (function () {
+    const t = document.getElementById('ntToggle'), l = document.getElementById('ntList');
+    t.addEventListener('click', function () {
+      const open = t.getAttribute('aria-expanded') === 'true';
+      t.setAttribute('aria-expanded', String(!open)); l.hidden = open;
+    });
+  })();
 
   if ('geolocation' in navigator) {
     watchId = navigator.geolocation.watchPosition(onPosition, onPositionError, {
