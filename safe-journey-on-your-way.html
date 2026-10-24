@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- ON YOUR WAY v2.3 · Oct 22 — full screen, HELORA header, Laney check-in card, Sound Alarm v2 purple -->
+<!-- ON YOUR WAY v2.4 · Oct 23 — full screen, HELORA header, Laney check-in card, Sound Alarm v2 purple -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HELORA — Safe Journey: On Your Way</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -147,7 +147,7 @@
   .notified .nt-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--divider); }
   .notified .nt-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; font-size: 18px; }
   .notified .nt-list li + li { border-top: 1px solid var(--divider); }
-  .notified .nt-name { font-weight: 700; }
+  .notified .nt-name { font-weight: 700; color: var(--text-primary); }
   .notified .nt-stat { font-size: 15px; color: var(--text-muted); }
   @media (prefers-reduced-motion: reduce) { .notified .nt-chev { transition: none; } }
 
@@ -578,7 +578,7 @@
 
   <div class="status-block">
     <h1 id="statusHeadline">Michael is on the way</h1>
-    <p id="statusSub"><span class="watcher">Laney</span> is watching this journey and will be notified on arrival.</p>
+    <p id="statusSub">Your people are watching this journey and will be notified on arrival.</p>
     <div class="eta-pill" id="etaPill">
       <span class="label">Arriving by</span>
       <span class="time" id="etaTime">7:45 PM</span>
@@ -636,7 +636,7 @@
     <button class="alarm-btn" id="alarmBtn">Sound<br>Alarm</button>
   </div>
   <a class="theme-switch" href="safe-journey-on-your-way-dark.html">View dark version</a>
-  <div class="version-tag">On Your Way · Ivory · v2.3 · Oct 22</div>
+  <div class="version-tag">On Your Way · Ivory · v2.4 · Oct 23</div>
   </div>
 
   <!-- ===== Overlay 1: Plans Changed menu ===== -->
@@ -653,7 +653,7 @@
       <span class="icon">
         <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 12 2a7 7 0 0 1 7 7.5C19 14.5 12 21 12 21z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.8"/></svg>
       </span>
-      <span class="txt"><strong>Add a stop</strong><span>Let Laney know about a detour</span></span>
+      <span class="txt"><strong>Add a stop</strong><span>Let your people know about a detour</span></span>
     </button>
 
     <button class="menu-row" onclick="closeSheet('plans'); openSheet('time')">
@@ -674,7 +674,7 @@
       <span class="icon red">
         <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </span>
-      <span class="txt"><strong>Cancel Safe Journey</strong><span>Laney will be notified</span></span>
+      <span class="txt"><strong>Cancel Safe Journey</strong><span>Your people will be notified</span></span>
     </button>
   </div>
 
@@ -686,7 +686,7 @@
     </button>
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">Update arrival time</h2>
-    <p class="sheet-sub">Laney will see your new estimated arrival.</p>
+    <p class="sheet-sub">Your people will see your new estimated arrival.</p>
 
     <div class="wheel-row">
       <div class="wheel" id="wheelHour"></div>
@@ -708,7 +708,7 @@
     </button>
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">Add a stop</h2>
-    <p class="sheet-sub">Laney will see this update on your journey.</p>
+    <p class="sheet-sub">Your people will see this update on your journey.</p>
 
     <div class="input-label">Stop location</div>
     <input class="text-input" type="text" id="stopInput" placeholder="Enter an address or place">
@@ -727,7 +727,7 @@
     </button>
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">Stop added</h2>
-    <p class="sheet-sub">Laney will be notified. Want to update your arrival time too?</p>
+    <p class="sheet-sub">Your people will be notified. Want to update your arrival time too?</p>
 
     <div class="sheet-btn-row" style="margin-top:22px;">
       <button class="btn btn-ghost" onclick="closeSheet('chain')">Skip</button>
@@ -743,7 +743,7 @@
     </button>
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">End journey early?</h2>
-    <p class="sheet-sub">Laney will be notified you're safe, and this journey will close.</p>
+    <p class="sheet-sub">Your people will be notified you're safe, and this journey will close.</p>
 
     <div class="sheet-btn-row" style="margin-top:22px;">
       <button class="btn btn-ghost" onclick="closeSheet('endEarly')">Cancel</button>
@@ -759,7 +759,7 @@
     </button>
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">Cancel Safe Journey?</h2>
-    <p class="sheet-sub">Laney will be notified this journey was canceled.</p>
+    <p class="sheet-sub">Your people will be notified this journey was canceled.</p>
 
     <div class="sheet-btn-row" style="margin-top:22px;">
       <button class="btn btn-primary" onclick="closeSheet('cancelJourney')">Keep journey</button>
@@ -771,7 +771,7 @@
 
 <script>
   // A fresh visit to this screen is a new journey: clear any earlier arrival flag (demo stitching).
-  try { localStorage.removeItem('helora.sj.arrivedAt'); } catch (e) {}
+  try { localStorage.removeItem('helora.sj.arrivedAt'); localStorage.removeItem('helora.sj.endedAs'); } catch (e) {}
 
   function openSheet(name) {
     document.getElementById('backdrop' + cap(name)).classList.add('open');
@@ -815,14 +815,40 @@
     const sub = document.getElementById('statusSub');
     if (kind === 'arrived') {
       headline.textContent = "You've arrived";
-      sub.textContent = 'This Safe Journey has ended.';
     } else if (kind === 'safe') {
       headline.textContent = "You're safe";
-      sub.textContent = 'Laney has been notified. This Safe Journey has ended.';
     } else {
       headline.textContent = 'Safe Journey canceled';
-      sub.textContent = 'Laney has been notified this journey was canceled.';
     }
+    sub.textContent = 'This Safe Journey has ended.';
+    showNotified(kind);
+  }
+
+  // All three endings (arrived, I'm safe, canceled) finish the same way:
+  // the "Your people have been notified" dropdown, then a Done button back
+  // to the hub. The Expecting Someone screens learn how it ended through
+  // these demo flags (arrivedAt for arrival, endedAs for safe/canceled).
+  // PROVISO — DEMO ONLY: nothing is actually sent here. In the real app
+  // HELORA's own notification service delivers this to every contact on the
+  // journey (Laney and Jeffrey) and the screen lists only the contacts the
+  // service confirms it reached; anyone it could not reach should read
+  // "Couldn't reach — try calling" instead of "Notified" (honest verbs).
+  // The alarm and the emergency row are deliberately left untouched: they
+  // stay live after the journey ends.
+  function showNotified(kind) {
+    const now = new Date();
+    const at = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    try {
+      if (kind === 'arrived') localStorage.setItem('helora.sj.arrivedAt', now.toISOString());
+      else localStorage.setItem('helora.sj.endedAs', kind + '|' + now.toISOString());
+    } catch (e) {}
+    document.getElementById('ntTime').textContent = 'Today at ' + at;
+    document.getElementById('ntLaney').textContent = 'Notified at ' + at;
+    document.getElementById('ntJeffrey').textContent = 'Notified at ' + at;
+    document.getElementById('notified').hidden = false;
+    const done = document.getElementById('doneBtn');
+    done.hidden = false;
+    done.focus({ preventScroll: true });
   }
 
   // ---- build time wheels ----
@@ -947,27 +973,10 @@
     completeArrival();
   }
 
-  // Manual "I've arrived": end the journey, then show who was notified.
-  // PROVISO — DEMO ONLY: nothing is actually sent here. In the real app
-  // HELORA's own notification service delivers this to every contact on the
-  // journey (Laney and Jeffrey) and the screen lists only the contacts the
-  // service confirms it reached; anyone it could not reach should read
-  // "Couldn't reach — try calling" instead of "Notified" (honest verbs).
-  // The alarm and the emergency row are deliberately left untouched: they
-  // stay live after arrival.
+  // Manual "I've arrived": ends the journey and shows who was notified
+  // (see showNotified above for the demo-only proviso).
   function completeArrival() {
-    const now = new Date();
-    const at = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    // Demo stitching: lets the Expecting Someone screens show "arrived" in the same browser.
-    try { localStorage.setItem('helora.sj.arrivedAt', now.toISOString()); } catch (e) {}
     endJourney('arrived');
-    document.getElementById('ntTime').textContent = 'Today at ' + at;
-    document.getElementById('ntLaney').textContent = 'Notified at ' + at;
-    document.getElementById('ntJeffrey').textContent = 'Notified at ' + at;
-    document.getElementById('notified').hidden = false;
-    const done = document.getElementById('doneBtn');
-    done.hidden = false;
-    done.focus({ preventScroll: true });
   }
   (function () {
     const t = document.getElementById('ntToggle'), l = document.getElementById('ntList');
